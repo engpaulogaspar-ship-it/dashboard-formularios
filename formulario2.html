@@ -1,0 +1,2400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Vistoria Técnica - Subestação</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #003366;
+      --secondary-color: #0056b3;
+      --accent-color: #28a745;
+      --light-bg: #f8fafc;
+      --card-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      --border-radius: 12px;
+    }
+
+    body {
+      font-family: 'Arial', 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      min-height: 100vh;
+      padding: 20px 10px;
+      color: #333;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header Moderno com Logos nos lados */
+    .dashboard-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 20px 30px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 140px;
+    }
+
+    .dashboard-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: skewX(-20deg);
+      z-index: 1;
+    }
+
+    .logo-left, .logo-right {
+      position: relative;
+      z-index: 2;
+      flex: 0 0 auto;
+    }
+
+    .logo-img {
+      height: 90px;
+      width: auto;
+      object-fit: contain;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .logo-img:hover {
+      transform: scale(1.05);
+    }
+
+    .org-info {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      flex: 1;
+      padding: 0 30px;
+    }
+
+    .org-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+      font-family: 'Arial', sans-serif;
+    }
+
+    .report-title {
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 8px 20px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 8px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Layout em Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    /* Cards Modernos */
+    .dashboard-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 25px;
+      box-shadow: var(--card-shadow);
+      border: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .card-title i {
+      font-size: 20px;
+    }
+
+    /* Formulário */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 8px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .form-control {
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 12px 15px;
+      transition: all 0.3s;
+      font-size: 15px;
+      height: auto;
+      -webkit-appearance: none;
+      appearance: none;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+      outline: none;
+    }
+
+    /* Preview do texto gerado */
+    .texto-preview {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #e9ecef;
+      margin: 20px 0;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+      text-align: justify;
+      white-space: pre-line;
+      max-height: 300px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .texto-preview h5 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 5px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Checkboxes com descrição */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .checkbox-container {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #e9ecef;
+      transition: all 0.3s;
+    }
+
+    .checkbox-container.checked {
+      border-color: var(--primary-color);
+      background: rgba(0, 51, 102, 0.05);
+    }
+
+    .checkbox-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+
+    .checkbox-option input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+      accent-color: var(--primary-color);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .checkbox-text {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 500;
+      color: #495057;
+      line-height: 1.5;
+      flex: 1;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .checkbox-description {
+      margin-top: 15px;
+      padding-left: 32px;
+    }
+
+    .checkbox-description textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 15px;
+      resize: vertical;
+      transition: all 0.3s;
+      font-family: 'Arial', sans-serif;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .checkbox-description textarea:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+      outline: none;
+    }
+
+    /* Textarea grandes */
+    .large-textarea {
+      min-height: 150px;
+      width: 100%;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 15px;
+      resize: vertical;
+      transition: all 0.3s;
+      font-family: 'Arial', sans-serif;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .large-textarea:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+      outline: none;
+    }
+
+    /* Lista de campos */
+    .field-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .field-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .field-number {
+      background: var(--primary-color);
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      flex-shrink: 0;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .field-input {
+      flex: 1;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 12px 15px;
+      font-size: 15px;
+      transition: all 0.3s;
+      -webkit-appearance: none;
+      appearance: none;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .field-input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+      outline: none;
+    }
+
+    /* Botões de Adicionar/Remover */
+    .btn-add-field {
+      background: linear-gradient(135deg, #6610f2, #6f42c1);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .btn-add-field:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(102, 16, 242, 0.3);
+    }
+
+    .btn-remove-field {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 10px;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .btn-remove-field:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+    }
+
+    /* Galeria de Fotos - MATRIZ DE 4 COLUNAS */
+    .foto-gallery {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 1200px) {
+      .foto-gallery {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .foto-gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .foto-gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .foto-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      background: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .foto-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .foto-preview {
+      width: 100%;
+      height: 150px;
+      background: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6c757d;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .foto-preview::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0) 100%);
+      pointer-events: none;
+    }
+
+    .foto-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .foto-item:hover .foto-preview img {
+      transform: scale(1.05);
+    }
+
+    .foto-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;
+      z-index: 10;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .foto-item:hover .foto-actions {
+      opacity: 1;
+    }
+
+    .foto-action-btn {
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .foto-action-btn:hover {
+      background: rgba(220, 53, 69, 0.9);
+      transform: scale(1.1);
+    }
+
+    .foto-description {
+      padding: 12px;
+      background: white;
+      border-top: 1px solid #e9ecef;
+      flex-grow: 1;
+    }
+
+    .foto-description input {
+      width: 100%;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-size: 13px;
+      -webkit-appearance: none;
+      appearance: none;
+      font-family: 'Arial', sans-serif;
+      transition: all 0.3s;
+    }
+
+    .foto-description input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
+    }
+
+    .foto-number {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--primary-color);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 10;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* Botão de adicionar foto */
+    .add-foto-btn {
+      background: #f8f9fa;
+      border: 2px dashed #6c757d;
+      border-radius: 8px;
+      width: 100%;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #6c757d;
+      cursor: pointer;
+      transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
+      padding: 20px;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .add-foto-btn:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      background: rgba(0, 51, 102, 0.05);
+    }
+
+    .add-foto-btn i {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    .add-foto-btn span {
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Input file invisível */
+    .file-input-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Assinatura */
+    .assinatura-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      border: 2px solid #e9ecef;
+      margin-top: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .assinatura-line {
+      height: 2px;
+      background: #333;
+      margin-top: 50px;
+      position: relative;
+    }
+
+    .assinatura-text {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 0 20px;
+      font-weight: 500;
+      color: #666;
+      font-size: 14px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Botões Modernos */
+    .btn-group-custom {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .btn-custom {
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      min-width: 160px;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .btn-custom:active {
+      transform: translateY(-2px);
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, var(--accent-color), #20c997);
+      color: white;
+    }
+
+    .btn-load {
+      background: linear-gradient(135deg, #17a2b8, #138496);
+      color: white;
+    }
+
+    .btn-pdf {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      color: white;
+    }
+
+    .btn-clear {
+      background: linear-gradient(135deg, #6c757d, #5a6268);
+      color: white;
+    }
+
+    .btn-print {
+      background: linear-gradient(135deg, #ffc107, #e0a800);
+      color: #212529;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: var(--accent-color);
+      color: white;
+      padding: 14px 22px;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      display: none;
+      z-index: 1000;
+      font-weight: 500;
+      animation: slideIn 0.3s ease;
+      font-family: 'Arial', sans-serif;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Footer */
+    .dashboard-footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #dee2e6;
+      color: #666;
+      font-size: 14px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Seção de Data */
+    .data-section {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      border: 2px solid #e9ecef;
+    }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      align-items: center;
+    }
+
+    /* Media Queries */
+    @media (max-width: 1200px) {
+      .dashboard-header {
+        padding: 15px 20px;
+        min-height: 120px;
+      }
+      .logo-img {
+        height: 75px;
+      }
+      .org-title {
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        min-height: auto;
+        padding: 20px;
+      }
+      .logo-img {
+        height: 65px;
+      }
+      .org-info {
+        padding: 0 15px;
+      }
+      .org-title {
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .org-title {
+        font-size: 16px;
+      }
+      .logo-img {
+        height: 55px;
+      }
+      .btn-custom {
+        min-width: 140px;
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+      .field-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .field-input {
+        width: 100%;
+      }
+      .btn-remove-field {
+        align-self: flex-start;
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: white;
+        padding: 0;
+      }
+      .dashboard-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+      }
+    }
+
+    /* Ajustes específicos para iOS */
+    @supports (-webkit-touch-callout: none) {
+      .form-control,
+      .field-input,
+      textarea,
+      input {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dashboard-container">
+    <!-- Header Moderno com Logos nos Lados -->
+    <div class="dashboard-header">
+      <div class="logo-left">
+        <img src="https://upload.wikimedia.org/wikipedia/pt/b/ba/Logo_IAT_PR.png" alt="Logo ERCBA" class="logo-img" id="logoLeft">
+      </div>
+      
+      <div class="org-info">
+        <h1 class="org-title">DIVISÃO DE LICENCIAMENTO ESTRATÉGICO</h1>
+        <div class="report-title">RELATÓRIO DE VISTORIA TÉCNICA</div>
+      </div>
+      
+      <div class="logo-right">
+        <img src="https://image2url.com/r2/default/images/1770223607016-99c57976-38bc-462d-aaac-01c87703b919.png" alt="Logo IAT" class="logo-img" id="logoRight">
+      </div>
+    </div>
+
+    <!-- Card de Identificação do Empreendimento -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-fingerprint"></i>
+          IDENTIFICAÇÃO DO EMPREENDIMENTO
+        </h3>
+      </div>
+      
+      <form id="formularioIdentificacao" onsubmit="event.preventDefault();">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="interessado">
+              <i class="fas fa-user-tie"></i> INTERESSADO:
+            </label>
+            <input type="text" id="interessado" class="form-control" 
+                   placeholder="Nome do interessado" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="assunto">
+              <i class="fas fa-file-contract"></i> ASSUNTO:
+            </label>
+            <input type="text" id="assunto" class="form-control" 
+                   placeholder="Assunto da vistoria" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="municipio">
+              <i class="fas fa-map-marker-alt"></i> MUNICÍPIO:
+            </label>
+            <input type="text" id="municipio" class="form-control" 
+                   placeholder="Município do empreendimento" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="coordenadas">
+              <i class="fas fa-globe-americas"></i> COORDENADAS:
+            </label>
+            <input type="text" id="coordenadas" class="form-control" 
+                   placeholder="Coordenadas geográficas" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="atividade">
+              <i class="fas fa-industry"></i> ATIVIDADE:
+            </label>
+            <input type="text" id="atividade" class="form-control" 
+                   placeholder="Atividade desenvolvida" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="protocolo">
+              <i class="fas fa-file-alt"></i> PROTOCOLO:
+            </label>
+            <input type="text" id="protocolo" class="form-control" 
+                   placeholder="Número do protocolo" required>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Card de Informações da Vistoria -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-clipboard-list"></i>
+          INFORMAÇÕES DA VISTORIA
+        </h3>
+      </div>
+      
+      <div class="data-section">
+        <div class="data-grid">
+          <div class="form-group">
+            <label class="form-label" for="dia">
+              <i class="fas fa-calendar-day"></i> DIA:
+            </label>
+            <input type="number" id="dia" class="form-control" min="1" max="31" 
+                   placeholder="DD" oninput="atualizarTextoGerado()">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="mes">
+              <i class="fas fa-calendar-month"></i> MÊS:
+            </label>
+            <input type="text" id="mes" class="form-control" 
+                   placeholder="Mês" oninput="atualizarTextoGerado()">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="ano">
+              <i class="fas fa-calendar-year"></i> ANO:
+            </label>
+            <input type="number" id="ano" class="form-control" min="2000" max="2100" 
+                   placeholder="AAAA" oninput="atualizarTextoGerado()">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="subestacao">
+            <i class="fas fa-bolt"></i> SUBESTAÇÃO:
+          </label>
+          <input type="text" id="subestacao" class="form-control" 
+                 placeholder="Nome da subestação" oninput="atualizarTextoGerado()">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-user-cog"></i> TÉCNICOS DA VISTORIA:
+          </label>
+          <div id="tecnicos-container"></div>
+          <button type="button" class="btn-add-field no-print" onclick="adicionarTecnico()">
+            <i class="fas fa-plus-circle"></i> Adicionar Técnico
+          </button>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="empresa">
+            <i class="fas fa-building"></i> EMPRESA:
+          </label>
+          <input type="text" id="empresa" class="form-control" 
+                 placeholder="Nome da empresa" oninput="atualizarTextoGerado()">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-user-tie"></i> REPRESENTANTES DA EMPRESA:
+          </label>
+          <div id="representantes-container"></div>
+          <button type="button" class="btn-add-field no-print" onclick="adicionarRepresentante()">
+            <i class="fas fa-plus-circle"></i> Adicionar Representante
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card de Texto Gerado (Preview) -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-file-alt"></i>
+          DESCRIÇÃO DA VISTORIA (PREVIEW)
+        </h3>
+      </div>
+      
+      <div class="texto-preview" id="textoPreview">
+        <h5>DESCRIÇÃO:</h5>
+      </div>
+    </div>
+
+    <!-- Card de Constatações -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-search"></i>
+          CONSTATAÇÕES
+        </h3>
+      </div>
+      
+      <div class="checkbox-group">
+        <div class="checkbox-container" id="container-inconformidades">
+          <div class="checkbox-option">
+            <input type="checkbox" id="inconformidades" name="constatacoes" value="inconformidades" onchange="atualizarTextoGerado()">
+            <label for="inconformidades" class="checkbox-text">
+              <strong>Foram identificadas inconformidades, consistindo em:</strong><br>
+              <small style="color: #666;">(Exemplos: avarias no sistema de drenagem, tubulações abertas e parcialmente obstruídas.)</small>
+            </label>
+          </div>
+          
+          <div class="checkbox-description" id="desc-inconformidades">
+            <textarea id="descricaoInconformidades" 
+                      placeholder="Descreva detalhadamente as inconformidades identificadas..."
+                      oninput="atualizarTextoGerado()"></textarea>
+          </div>
+        </div>
+        
+        <div class="checkbox-container" id="container-sem-inconformidades">
+          <div class="checkbox-option">
+            <input type="checkbox" id="semInconformidades" name="constatacoes" value="semInconformidades" onchange="atualizarTextoGerado()">
+            <label for="semInconformidades" class="checkbox-text">
+              <strong>Não foram identificadas inconformidades.</strong><br>
+              <small style="color: #666;">Os sistemas de contenção de óleo e de separação de água e óleo encontram-se em conformidade, não sendo observadas irregularidades durante a vistoria.</small>
+            </label>
+          </div>
+          
+          <div class="checkbox-description" id="desc-sem-inconformidades">
+            <textarea id="descricaoSemInconformidades" 
+                      placeholder="Descreva as condições de conformidade observadas..."
+                      oninput="atualizarTextoGerado()"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card de Registros Fotográficos - MATRIZ DE 4 COLUNAS -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-camera"></i>
+          REGISTROS FOTOGRÁFICOS
+          <span class="badge bg-primary rounded-pill" id="foto-counter">0</span>
+        </h3>
+      </div>
+      
+      <div class="foto-gallery" id="foto-gallery">
+        <!-- Fotos serão adicionadas dinamicamente -->
+      </div>
+      
+      <!-- Input file oculto -->
+      <input type="file" id="fotoInput" class="file-input-hidden" accept="image/*" capture="environment" multiple>
+      
+      <div class="row no-print" style="margin-top: 20px;">
+        <div class="col-md-6">
+          <button type="button" class="btn-add-field" onclick="abrirCamera()" style="width: 100%; justify-content: center;">
+            <i class="fas fa-camera"></i> Tirar Foto
+          </button>
+        </div>
+        <div class="col-md-6">
+          <button type="button" class="btn-add-field" onclick="abrirGaleria()" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #17a2b8, #138496);">
+            <i class="fas fa-images"></i> Escolher da Galeria
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card de Conclusão -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-check-circle"></i>
+          CONCLUSÃO
+        </h3>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-check text-success"></i> CONFORMIDADES IDENTIFICADAS:
+        </label>
+        <div id="conformidades-container"></div>
+        <button type="button" class="btn-add-field no-print" onclick="adicionarConformidade()">
+          <i class="fas fa-plus-circle"></i> Adicionar Conformidade
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-times text-danger"></i> INCONFORMIDADES IDENTIFICADAS (QUANDO APLICÁVEL):
+        </label>
+        <div id="inconformidades-container"></div>
+        <button type="button" class="btn-add-field no-print" onclick="adicionarInconformidade()">
+          <i class="fas fa-plus-circle"></i> Adicionar Inconformidade
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="observacoesAdicionais">
+          <i class="fas fa-sticky-note"></i> OBSERVAÇÕES ADICIONAIS (SE HOUVER):
+        </label>
+        <textarea id="observacoesAdicionais" class="large-textarea" 
+                  placeholder="Digite observações adicionais..." oninput="atualizarStatusSalvamento()"></textarea>
+      </div>
+    </div>
+
+    <!-- Card de Assinatura -->
+    <div class="assinatura-container">
+      <div class="form-group">
+        <label class="form-label" for="assinaturaVistoriador">
+          <i class="fas fa-signature"></i> VISTORIADOR (A):
+        </label>
+        <input type="text" id="assinaturaVistoriador" class="form-control" 
+               placeholder="Nome completo do vistoriador" required oninput="atualizarStatusSalvamento()">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="cargoVistoriador">
+          <i class="fas fa-id-card"></i> CARGO:
+        </label>
+        <input type="text" id="cargoVistoriador" class="form-control" 
+               value="Engenheiro/Responsável Técnico" required oninput="atualizarStatusSalvamento()">
+      </div>
+      
+      <div class="assinatura-line">
+        <div class="assinatura-text">ASSINATURA</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="dashboard-footer">
+      <p>Este relatório deve ser preenchido com base na vistoria técnica realizada no local.</p>
+      <p><i class="fas fa-shield-alt"></i> Documento oficial - ERCBA/IAT</p>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="btn-group-custom no-print">
+      <button type="button" class="btn-custom btn-save" onclick="salvarFormulario()">
+        <i class="fas fa-save"></i> Salvar
+      </button>
+      <button type="button" class="btn-custom btn-load" onclick="carregarFormulario()">
+        <i class="fas fa-folder-open"></i> Carregar
+      </button>
+      <button type="button" class="btn-custom btn-pdf" onclick="gerarPDF()">
+        <i class="fas fa-file-pdf"></i> Gerar PDF
+      </button>
+      <button type="button" class="btn-custom btn-clear" onclick="limparFormulario()">
+        <i class="fas fa-trash-alt"></i> Limpar
+      </button>
+      <button type="button" class="btn-custom btn-print" onclick="window.print()">
+        <i class="fas fa-print"></i> Imprimir
+      </button>
+    </div>
+  </div>
+
+  <div class="status-bar" id="statusBar"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ============================================
+    // CONFIGURAÇÕES DO PDF CONFORME ABNT
+    // ============================================
+    const PDF_CONFIG = {
+      relatorioText: {
+        linha1: "DIVISÃO DE LICENCIAMENTO ESTRATÉGICO",
+        linha2: "INSTITUTO ÁGUA E TERRA - IAT",
+        linha3: "RELATÓRIO DE VISTORIA TÉCNICA"
+      },
+      footerText: {
+        linha1: "IAT - Instituto Água e Terra",
+        linha2: "Rua Engenheiros Rebouças, 1206 | Rebouças | Curitiba/PR",
+        linha3: "CEP: 80215.100 | Tel: 41 3213-3700"
+      },
+      colors: {
+        primary: [0, 51, 102],
+        secondary: [0, 86, 179],
+        lightGray: [245, 245, 245],
+        mediumGray: [200, 200, 200],
+        darkGray: [80, 80, 80],
+        tableHeader: [0, 51, 102],
+        tableRow1: [250, 250, 250],
+        tableRow2: [255, 255, 255],
+        tableBorder: [180, 180, 180]
+      },
+      pageWidth: 210,
+      marginLeft: 25,
+      marginRight: 25,
+      // Configurações ABNT
+      font: "helvetica",
+      fontSize: 12,
+      lineHeight: 6
+    };
+    
+    // ============================================
+    // LOGOS FIXAS
+    // ============================================
+    const LOGOS = {
+      headerLeft: "https://upload.wikimedia.org/wikipedia/pt/b/ba/Logo_IAT_PR.png",
+      headerRight: "https://image2url.com/r2/default/images/1770223607016-99c57976-38bc-462d-aaac-01c87703b919.png",
+      footerLogo: "https://image2url.com/r2/default/images/1770320351621-21df2145-4f19-473f-ab9e-1bb7c0eeb8dc.png"
+    };
+    
+    // ============================================
+    // DADOS DINÂMICOS DO FORMULÁRIO
+    // ============================================
+    let tecnicos = [];
+    let representantes = [];
+    let conformidades = [];
+    let inconformidades = [];
+    let fotos = [];
+    
+    // ============================================
+    // DETECÇÃO DE IOS
+    // ============================================
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    
+    // ============================================
+    // INICIALIZAÇÃO
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+      const hoje = new Date();
+      const meses = [
+        "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+      ];
+      
+      document.getElementById('dia').value = hoje.getDate();
+      document.getElementById('mes').value = meses[hoje.getMonth()];
+      document.getElementById('ano').value = hoje.getFullYear();
+      
+      // Configurar checkboxes
+      const inconformidadesCheckbox = document.getElementById('inconformidades');
+      const semInconformidadesCheckbox = document.getElementById('semInconformidades');
+      
+      document.getElementById('desc-inconformidades').style.display = 'none';
+      document.getElementById('desc-sem-inconformidades').style.display = 'none';
+      
+      inconformidadesCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+          semInconformidadesCheckbox.checked = false;
+          document.getElementById('desc-inconformidades').style.display = 'block';
+          document.getElementById('desc-sem-inconformidades').style.display = 'none';
+          document.getElementById('container-inconformidades').classList.add('checked');
+          document.getElementById('container-sem-inconformidades').classList.remove('checked');
+        } else {
+          document.getElementById('desc-inconformidades').style.display = 'none';
+          document.getElementById('container-inconformidades').classList.remove('checked');
+        }
+        atualizarTextoGerado();
+      });
+      
+      semInconformidadesCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+          inconformidadesCheckbox.checked = false;
+          document.getElementById('desc-sem-inconformidades').style.display = 'block';
+          document.getElementById('desc-inconformidades').style.display = 'none';
+          document.getElementById('container-sem-inconformidades').classList.add('checked');
+          document.getElementById('container-inconformidades').classList.remove('checked');
+        } else {
+          document.getElementById('desc-sem-inconformidades').style.display = 'none';
+          document.getElementById('container-sem-inconformidades').classList.remove('checked');
+        }
+        atualizarTextoGerado();
+      });
+      
+      // Configurar input file
+      const fotoInput = document.getElementById('fotoInput');
+      fotoInput.addEventListener('change', function(e) {
+        processarArquivos(e.target.files);
+        this.value = '';
+      });
+      
+      renderizarTecnicos();
+      renderizarRepresentantes();
+      renderizarConformidades();
+      renderizarInconformidades();
+      renderizarFotos();
+      
+      atualizarTextoGerado();
+      
+      setTimeout(() => {
+        carregarFormulario();
+      }, 500);
+    });
+    
+    // ============================================
+    // FUNÇÕES PARA CÂMERA/GALERIA
+    // ============================================
+    
+    function abrirCamera() {
+      const fotoInput = document.getElementById('fotoInput');
+      if (isIOS) {
+        fotoInput.setAttribute('capture', 'environment');
+        fotoInput.removeAttribute('multiple');
+      } else {
+        fotoInput.removeAttribute('capture');
+        fotoInput.removeAttribute('multiple');
+      }
+      fotoInput.click();
+    }
+    
+    function abrirGaleria() {
+      const fotoInput = document.getElementById('fotoInput');
+      fotoInput.removeAttribute('capture');
+      if (!isIOS) {
+        fotoInput.setAttribute('multiple', 'multiple');
+      }
+      fotoInput.click();
+    }
+    
+    function processarArquivos(arquivos) {
+      if (!arquivos || arquivos.length === 0) return;
+      
+      const arquivosArray = Array.from(arquivos);
+      
+      arquivosArray.forEach((arquivo, index) => {
+        if (!arquivo.type.startsWith('image/')) {
+          mostrarStatus(`Arquivo ${index + 1} não é uma imagem`, 'error');
+          return;
+        }
+        
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+          const fotoData = {
+            id: fotos.length,
+            dataUrl: event.target.result,
+            descricao: '',
+            fileName: arquivo.name
+          };
+          
+          fotos.push(fotoData);
+          
+          if (index === arquivosArray.length - 1) {
+            renderizarFotos();
+            atualizarTextoGerado();
+            atualizarContadorFotos();
+            mostrarStatus(`${arquivosArray.length} foto(s) adicionada(s) com sucesso!`);
+          } else {
+            renderizarFotos();
+            atualizarContadorFotos();
+          }
+        };
+        
+        reader.onerror = function() {
+          mostrarStatus(`Erro ao carregar imagem: ${arquivo.name}`, 'error');
+        };
+        
+        reader.readAsDataURL(arquivo);
+      });
+    }
+    
+    // ============================================
+    // FUNÇÕES PARA ADICIONAR ITENS DINÂMICOS
+    // ============================================
+    
+    function adicionarTecnico() {
+      const container = document.getElementById('tecnicos-container');
+      const index = tecnicos.length;
+      
+      const div = document.createElement('div');
+      div.className = 'field-item';
+      div.innerHTML = `
+        <div class="field-number">${index + 1}</div>
+        <input type="text" class="field-input tecnico-input" 
+               id="tecnico_${index}" 
+               placeholder="Nome completo do técnico"
+               oninput="atualizarTecnicoInput(${index})">
+        <button type="button" class="btn-remove-field no-print" onclick="removerTecnico(${index})">
+          <i class="fas fa-trash"></i> Remover
+        </button>
+      `;
+      
+      container.appendChild(div);
+      tecnicos.push("");
+      
+      const input = document.getElementById(`tecnico_${index}`);
+      setTimeout(() => {
+        input.focus();
+      }, 100);
+      
+      mostrarStatus('Novo técnico adicionado!');
+    }
+    
+    function atualizarTecnicoInput(index) {
+      const input = document.getElementById(`tecnico_${index}`);
+      if (input) {
+        tecnicos[index] = input.value;
+        atualizarTextoGerado();
+      }
+    }
+    
+    function removerTecnico(index) {
+      if (tecnicos.length <= 0) return;
+      
+      if (confirm('Tem certeza que deseja remover este técnico?')) {
+        tecnicos.splice(index, 1);
+        renderizarTecnicos();
+        atualizarTextoGerado();
+        mostrarStatus('Técnico removido!');
+      }
+    }
+    
+    function renderizarTecnicos() {
+      const container = document.getElementById('tecnicos-container');
+      container.innerHTML = '';
+      
+      tecnicos.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'field-item';
+        div.innerHTML = `
+          <div class="field-number">${index + 1}</div>
+          <input type="text" class="field-input tecnico-input" 
+                 id="tecnico_${index}" 
+                 value="${item || ''}"
+                 placeholder="Nome completo do técnico"
+                 oninput="atualizarTecnicoInput(${index})">
+          <button type="button" class="btn-remove-field no-print" onclick="removerTecnico(${index})">
+            <i class="fas fa-trash"></i> Remover
+          </button>
+        `;
+        
+        container.appendChild(div);
+      });
+    }
+    
+    function adicionarRepresentante() {
+      const container = document.getElementById('representantes-container');
+      const index = representantes.length;
+      
+      const div = document.createElement('div');
+      div.className = 'field-item';
+      div.innerHTML = `
+        <div class="field-number">${index + 1}</div>
+        <input type="text" class="field-input representante-input" 
+               id="representante_${index}" 
+               placeholder="Nome completo do representante"
+               oninput="atualizarRepresentanteInput(${index})">
+        <button type="button" class="btn-remove-field no-print" onclick="removerRepresentante(${index})">
+          <i class="fas fa-trash"></i> Remover
+        </button>
+      `;
+      
+      container.appendChild(div);
+      representantes.push("");
+      
+      const input = document.getElementById(`representante_${index}`);
+      setTimeout(() => {
+        input.focus();
+      }, 100);
+      
+      mostrarStatus('Novo representante adicionado!');
+    }
+    
+    function atualizarRepresentanteInput(index) {
+      const input = document.getElementById(`representante_${index}`);
+      if (input) {
+        representantes[index] = input.value;
+        atualizarTextoGerado();
+      }
+    }
+    
+    function removerRepresentante(index) {
+      if (representantes.length <= 0) return;
+      
+      if (confirm('Tem certeza que deseja remover este representante?')) {
+        representantes.splice(index, 1);
+        renderizarRepresentantes();
+        atualizarTextoGerado();
+        mostrarStatus('Representante removido!');
+      }
+    }
+    
+    function renderizarRepresentantes() {
+      const container = document.getElementById('representantes-container');
+      container.innerHTML = '';
+      
+      representantes.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'field-item';
+        div.innerHTML = `
+          <div class="field-number">${index + 1}</div>
+          <input type="text" class="field-input representante-input" 
+                 id="representante_${index}" 
+                 value="${item || ''}"
+                 placeholder="Nome completo do representante"
+                 oninput="atualizarRepresentanteInput(${index})">
+          <button type="button" class="btn-remove-field no-print" onclick="removerRepresentante(${index})">
+            <i class="fas fa-trash"></i> Remover
+          </button>
+        `;
+        
+        container.appendChild(div);
+      });
+    }
+    
+    function adicionarConformidade() {
+      const container = document.getElementById('conformidades-container');
+      const index = conformidades.length;
+      
+      const div = document.createElement('div');
+      div.className = 'field-item';
+      div.innerHTML = `
+        <div class="field-number">${index + 1}</div>
+        <input type="text" class="field-input conformidade-input" 
+               id="conformidade_${index}" 
+               placeholder="Descreva a conformidade identificada..."
+               oninput="atualizarConformidadeInput(${index})">
+        <button type="button" class="btn-remove-field no-print" onclick="removerConformidade(${index})">
+          <i class="fas fa-trash"></i> Remover
+        </button>
+      `;
+      
+      container.appendChild(div);
+      conformidades.push("");
+      
+      const input = document.getElementById(`conformidade_${index}`);
+      setTimeout(() => {
+        input.focus();
+      }, 100);
+      
+      mostrarStatus('Nova conformidade adicionada!');
+    }
+    
+    function atualizarConformidadeInput(index) {
+      const input = document.getElementById(`conformidade_${index}`);
+      if (input) {
+        conformidades[index] = input.value;
+      }
+    }
+    
+    function removerConformidade(index) {
+      if (conformidades.length <= 0) return;
+      
+      if (confirm('Tem certeza que deseja remover esta conformidade?')) {
+        conformidades.splice(index, 1);
+        renderizarConformidades();
+        mostrarStatus('Conformidade removida!');
+      }
+    }
+    
+    function renderizarConformidades() {
+      const container = document.getElementById('conformidades-container');
+      container.innerHTML = '';
+      
+      conformidades.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'field-item';
+        div.innerHTML = `
+          <div class="field-number">${index + 1}</div>
+          <input type="text" class="field-input conformidade-input" 
+                 id="conformidade_${index}" 
+                 value="${item || ''}"
+                 placeholder="Descreva a conformidade identificada..."
+                 oninput="atualizarConformidadeInput(${index})">
+          <button type="button" class="btn-remove-field no-print" onclick="removerConformidade(${index})">
+            <i class="fas fa-trash"></i> Remover
+          </button>
+        `;
+        
+        container.appendChild(div);
+      });
+    }
+    
+    function adicionarInconformidade() {
+      const container = document.getElementById('inconformidades-container');
+      const index = inconformidades.length;
+      
+      const div = document.createElement('div');
+      div.className = 'field-item';
+      div.innerHTML = `
+        <div class="field-number">${index + 1}</div>
+        <input type="text" class="field-input inconformidade-input" 
+               id="inconformidade_${index}" 
+               placeholder="Descreva a inconformidade identificada..."
+               oninput="atualizarInconformidadeInput(${index})">
+        <button type="button" class="btn-remove-field no-print" onclick="removerInconformidade(${index})">
+          <i class="fas fa-trash"></i> Remover
+        </button>
+      `;
+      
+      container.appendChild(div);
+      inconformidades.push("");
+      
+      const input = document.getElementById(`inconformidade_${index}`);
+      setTimeout(() => {
+        input.focus();
+      }, 100);
+      
+      mostrarStatus('Nova inconformidade adicionada!');
+    }
+    
+    function atualizarInconformidadeInput(index) {
+      const input = document.getElementById(`inconformidade_${index}`);
+      if (input) {
+        inconformidades[index] = input.value;
+      }
+    }
+    
+    function removerInconformidade(index) {
+      if (inconformidades.length <= 0) return;
+      
+      if (confirm('Tem certeza que deseja remover esta inconformidade?')) {
+        inconformidades.splice(index, 1);
+        renderizarInconformidades();
+        mostrarStatus('Inconformidade removida!');
+      }
+    }
+    
+    function renderizarInconformidades() {
+      const container = document.getElementById('inconformidades-container');
+      container.innerHTML = '';
+      
+      inconformidades.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'field-item';
+        div.innerHTML = `
+          <div class="field-number">${index + 1}</div>
+          <input type="text" class="field-input inconformidade-input" 
+                 id="inconformidade_${index}" 
+                 value="${item || ''}"
+                 placeholder="Descreva a inconformidade identificada..."
+                 oninput="atualizarInconformidadeInput(${index})">
+          <button type="button" class="btn-remove-field no-print" onclick="removerInconformidade(${index})">
+            <i class="fas fa-trash"></i> Remover
+          </button>
+        `;
+        
+        container.appendChild(div);
+      });
+    }
+    
+    function removerFoto(index) {
+      if (fotos.length <= 0) return;
+      
+      if (confirm('Tem certeza que deseja remover esta foto?')) {
+        fotos.splice(index, 1);
+        renderizarFotos();
+        atualizarTextoGerado();
+        atualizarContadorFotos();
+        mostrarStatus('Foto removida!');
+      }
+    }
+    
+    function atualizarDescricaoFoto(index, descricao) {
+      if (fotos[index]) {
+        fotos[index].descricao = descricao;
+      }
+    }
+    
+    function atualizarContadorFotos() {
+      const counter = document.getElementById('foto-counter');
+      if (counter) {
+        counter.textContent = fotos.length;
+      }
+    }
+    
+    function renderizarFotos() {
+      const container = document.getElementById('foto-gallery');
+      container.innerHTML = '';
+      
+      fotos.forEach((foto, index) => {
+        const div = document.createElement('div');
+        div.className = 'foto-item';
+        div.innerHTML = `
+          <div class="foto-preview">
+            <img src="${foto.dataUrl}" alt="Foto ${index + 1}" loading="lazy">
+            <div class="foto-number">${index + 1}</div>
+          </div>
+          <div class="foto-actions">
+            <button class="foto-action-btn no-print" onclick="removerFoto(${index})" title="Remover foto">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+          <div class="foto-description">
+            <input type="text" 
+                   placeholder="Descrição da foto..." 
+                   value="${foto.descricao || ''}"
+                   oninput="atualizarDescricaoFoto(${index}, this.value)">
+          </div>
+        `;
+        
+        container.appendChild(div);
+      });
+      
+      atualizarContadorFotos();
+    }
+    
+    // ============================================
+    // FUNÇÕES PRINCIPAIS
+    // ============================================
+    
+    function atualizarTextoGerado() {
+      const dia = document.getElementById('dia').value || '____';
+      const mes = document.getElementById('mes').value || '__________';
+      const ano = document.getElementById('ano').value || '______';
+      const empresa = document.getElementById('empresa').value || '______________________________________';
+      
+      let listaTecnicos = '';
+      if (tecnicos.length > 0) {
+        const tecnicosValidos = tecnicos.filter(t => t.trim() !== '');
+        if (tecnicosValidos.length > 0) {
+          if (tecnicosValidos.length === 1) {
+            listaTecnicos = `pelo técnico ${tecnicosValidos[0]}`;
+          } else if (tecnicosValidos.length === 2) {
+            listaTecnicos = `pelos técnicos ${tecnicosValidos[0]} e ${tecnicosValidos[1]}`;
+          } else {
+            const ultimo = tecnicosValidos.pop();
+            listaTecnicos = `pelos técnicos ${tecnicosValidos.join(', ')} e ${ultimo}`;
+          }
+        }
+      }
+      
+      let listaRepresentantes = '';
+      if (representantes.length > 0) {
+        const representantesValidos = representantes.filter(r => r.trim() !== '');
+        if (representantesValidos.length > 0) {
+          if (representantesValidos.length === 1) {
+            listaRepresentantes = `pelo funcionário da ${empresa} ${representantesValidos[0]}`;
+          } else if (representantesValidos.length === 2) {
+            listaRepresentantes = `pelos funcionários da ${empresa} ${representantesValidos[0]} e ${representantesValidos[1]}`;
+          } else {
+            const ultimo = representantesValidos.pop();
+            listaRepresentantes = `pelos funcionários da ${empresa} ${representantesValidos.join(', ')} e ${ultimo}`;
+          }
+        }
+      }
+      
+      const temInconformidades = document.getElementById('inconformidades').checked;
+      const semInconformidades = document.getElementById('semInconformidades').checked;
+      const descInconformidades = document.getElementById('descricaoInconformidades').value || '';
+      const descSemInconformidades = document.getElementById('descricaoSemInconformidades').value || '';
+      
+      let textoInconformidades = '';
+      if (temInconformidades && descInconformidades) {
+        textoInconformidades = `Na subestação foram encontradas algumas inconformidades como:
+        ${descInconformidades.toLowerCase()}. `;
+        if (semInconformidades || descSemInconformidades) {
+          textoInconformidades += `Já no sistema de contenção de óleo e no sistema de separação de água e óleo não foram encontradas inconformidades.`;
+        }
+      } else if (semInconformidades) {
+        if (descSemInconformidades) {
+          textoInconformidades = descSemInconformidades;
+        } else {
+          textoInconformidades = 'Não foram encontradas inconformidades durante a vistoria.';
+        }
+      }
+      
+      let textoCompleto = `A vistoria foi realizada no dia ${dia} de ${mes} de ${ano}`;
+      
+      if (listaTecnicos) {
+        textoCompleto += `, ${listaTecnicos}`;
+      }
+      
+      if (listaRepresentantes) {
+        textoCompleto += `, e acompanhada ${listaRepresentantes}`;
+      }
+      
+      textoCompleto += `.`;
+      
+      if (textoInconformidades) {
+        textoCompleto += ` ${textoInconformidades}`;
+      }
+      
+      if (fotos.length > 0) {
+        textoCompleto += ` Segue abaixo registros fotográficos do empreendimento:`;
+      }
+      
+      const previewDiv = document.getElementById('textoPreview');
+      previewDiv.innerHTML = `<h5>DESCRIÇÃO:</h5>${textoCompleto}`;
+      
+      if (!dia && !mes && !ano && tecnicos.length === 0) {
+        previewDiv.innerHTML = `<h5>DESCRIÇÃO:</h5><p style="color: #666; font-style: italic;">Preencha as informações da vistoria para ver o texto gerado automaticamente.</p>`;
+      }
+    }
+    
+    function salvarFormulario() {
+      const dados = {
+        interessado: document.getElementById('interessado').value,
+        assunto: document.getElementById('assunto').value,
+        municipio: document.getElementById('municipio').value,
+        coordenadas: document.getElementById('coordenadas').value,
+        atividade: document.getElementById('atividade').value,
+        protocolo: document.getElementById('protocolo').value,
+        dia: document.getElementById('dia').value,
+        mes: document.getElementById('mes').value,
+        ano: document.getElementById('ano').value,
+        subestacao: document.getElementById('subestacao').value,
+        empresa: document.getElementById('empresa').value,
+        tecnicos: tecnicos,
+        representantes: representantes,
+        inconformidadesCheck: document.getElementById('inconformidades').checked,
+        semInconformidadesCheck: document.getElementById('semInconformidades').checked,
+        descricaoInconformidades: document.getElementById('descricaoInconformidades').value,
+        descricaoSemInconformidades: document.getElementById('descricaoSemInconformidades').value,
+        fotos: fotos,
+        conformidades: conformidades,
+        inconformidades: inconformidades,
+        observacoesAdicionais: document.getElementById('observacoesAdicionais').value,
+        assinaturaVistoriador: document.getElementById('assinaturaVistoriador').value,
+        cargoVistoriador: document.getElementById('cargoVistoriador').value
+      };
+      
+      localStorage.setItem('relatorioVistoriaSubestacao', JSON.stringify(dados));
+      mostrarStatus('Formulário salvo localmente!');
+    }
+    
+    function carregarFormulario() {
+      const dadosSalvos = localStorage.getItem('relatorioVistoriaSubestacao');
+      if (!dadosSalvos) {
+        mostrarStatus('Nenhum dado salvo encontrado.', 'info');
+        return;
+      }
+      
+      try {
+        const dados = JSON.parse(dadosSalvos);
+        
+        document.getElementById('interessado').value = dados.interessado || '';
+        document.getElementById('assunto').value = dados.assunto || '';
+        document.getElementById('municipio').value = dados.municipio || '';
+        document.getElementById('coordenadas').value = dados.coordenadas || '';
+        document.getElementById('atividade').value = dados.atividade || '';
+        document.getElementById('protocolo').value = dados.protocolo || '';
+        document.getElementById('dia').value = dados.dia || '';
+        document.getElementById('mes').value = dados.mes || '';
+        document.getElementById('ano').value = dados.ano || '';
+        document.getElementById('subestacao').value = dados.subestacao || '';
+        document.getElementById('empresa').value = dados.empresa || '';
+        
+        tecnicos = dados.tecnicos || [];
+        representantes = dados.representantes || [];
+        
+        document.getElementById('inconformidades').checked = dados.inconformidadesCheck || false;
+        document.getElementById('semInconformidades').checked = dados.semInconformidadesCheck || false;
+        document.getElementById('descricaoInconformidades').value = dados.descricaoInconformidades || '';
+        document.getElementById('descricaoSemInconformidades').value = dados.descricaoSemInconformidades || '';
+        
+        if (dados.inconformidadesCheck) {
+          document.getElementById('inconformidades').dispatchEvent(new Event('change'));
+        } else if (dados.semInconformidadesCheck) {
+          document.getElementById('semInconformidades').dispatchEvent(new Event('change'));
+        }
+        
+        fotos = dados.fotos || [];
+        conformidades = dados.conformidades || [];
+        inconformidades = dados.inconformidades || [];
+        document.getElementById('observacoesAdicionais').value = dados.observacoesAdicionais || '';
+        document.getElementById('assinaturaVistoriador').value = dados.assinaturaVistoriador || '';
+        document.getElementById('cargoVistoriador').value = dados.cargoVistoriador || 'Engenheiro/Responsável Técnico';
+        
+        renderizarTecnicos();
+        renderizarRepresentantes();
+        renderizarConformidades();
+        renderizarInconformidades();
+        renderizarFotos();
+        
+        atualizarTextoGerado();
+        atualizarContadorFotos();
+        
+        mostrarStatus('Dados carregados com sucesso!');
+      } catch (e) {
+        console.error('Erro ao carregar dados:', e);
+        mostrarStatus('Erro ao carregar dados salvos', 'error');
+      }
+    }
+    
+    // Função principal para gerar PDF com formatação ABNT
+    function gerarPDF() {
+      mostrarStatus('Gerando PDF conforme normas ABNT...', 'info');
+      
+      try {
+        if (typeof window.jspdf === 'undefined') {
+          mostrarStatus('Erro: Biblioteca jsPDF não carregada', 'error');
+          return;
+        }
+        
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = 210;
+        const marginLeft = 25;
+        const marginRight = 25;
+        const contentWidth = pageWidth - marginLeft - marginRight;
+        let yPos = 25;
+        
+        // Configurações ABNT
+        const fontSize = 12;
+        const lineHeight = 6;
+        
+        // Função para adicionar cabeçalho
+        function adicionarCabecalho() {
+          try {
+            if (LOGOS.headerLeft) {
+              pdf.addImage(LOGOS.headerLeft, 'PNG', marginLeft, 10, 25, 20);
+            }
+            if (LOGOS.headerRight) {
+              pdf.addImage(LOGOS.headerRight, 'PNG', pageWidth - marginRight - 20, 10, 20, 18);
+            }
+          } catch (e) {
+            console.log('Logos não carregadas no PDF');
+          }
+          
+          pdf.setFont(PDF_CONFIG.font, "bold");
+          pdf.setFontSize(14);
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text(PDF_CONFIG.relatorioText.linha1, pageWidth / 2, 15, { align: 'center' });
+          
+          pdf.setFontSize(12);
+          pdf.text(PDF_CONFIG.relatorioText.linha2, pageWidth / 2, 22, { align: 'center' });
+          
+          pdf.setFontSize(12);
+          pdf.setFont(PDF_CONFIG.font, "normal");
+          pdf.text(PDF_CONFIG.relatorioText.linha3, pageWidth / 2, 29, { align: 'center' });
+          
+          pdf.setDrawColor(...PDF_CONFIG.colors.primary);
+          pdf.setLineWidth(0.3);
+          pdf.line(marginLeft, 34, pageWidth - marginRight, 34);
+        }
+        
+        // Função para adicionar rodapé
+        function adicionarRodape(paginaAtual, totalPaginas) {
+          const hoje = new Date().toLocaleDateString('pt-BR');
+          
+          pdf.setDrawColor(...PDF_CONFIG.colors.mediumGray);
+          pdf.setLineWidth(0.2);
+          pdf.line(marginLeft, 277, pageWidth - marginRight, 277);
+          
+          pdf.setFontSize(8);
+          pdf.setFont(PDF_CONFIG.font, "normal");
+          pdf.setTextColor(...PDF_CONFIG.colors.darkGray);
+          
+          pdf.text(PDF_CONFIG.footerText.linha1, marginLeft, 283);
+          pdf.text(PDF_CONFIG.footerText.linha2, marginLeft, 288);
+          pdf.text(PDF_CONFIG.footerText.linha3, marginLeft, 293);
+          
+          pdf.text(`Gerado em: ${hoje}`, pageWidth / 2, 293, { align: 'center' });
+          pdf.text(`Página ${paginaAtual} de ${totalPaginas}`, pageWidth - marginRight, 293, { align: 'right' });
+        }
+        
+        // Função para verificar necessidade de nova página
+        function verificarNovaPagina(alturaNecessaria) {
+          if (yPos + alturaNecessaria > 270) {
+            const paginaAtual = pdf.internal.getNumberOfPages();
+            adicionarRodape(paginaAtual, paginaAtual + 1);
+            pdf.addPage();
+            adicionarCabecalho();
+            yPos = 40;
+            return true;
+          }
+          return false;
+        }
+        
+        // Função para adicionar texto formatado
+        function adicionarTexto(texto, negrito = false) {
+          if (!texto) return;
+          
+          pdf.setFont(PDF_CONFIG.font, negrito ? "bold" : "normal");
+          pdf.setFontSize(fontSize);
+          pdf.setTextColor(0, 0, 0);
+          
+          const lines = pdf.splitTextToSize(texto, contentWidth);
+          
+          for (let i = 0; i < lines.length; i++) {
+            if (yPos > 270) {
+              const paginaAtual = pdf.internal.getNumberOfPages();
+              adicionarRodape(paginaAtual, paginaAtual + 1);
+              pdf.addPage();
+              adicionarCabecalho();
+              yPos = 40;
+            }
+            pdf.text(lines[i], marginLeft, yPos);
+            yPos += lineHeight;
+          }
+          yPos += 2;
+        }
+        
+        // Função para criar título de seção
+        function adicionarTitulo(texto) {
+          verificarNovaPagina(10);
+          pdf.setFont(PDF_CONFIG.font, "bold");
+          pdf.setFontSize(14);
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text(texto, marginLeft, yPos);
+          yPos += lineHeight + 2;
+        }
+        
+        // Função para criar tabela elegante
+        function criarTabelaIdentificacao() {
+          const dados = [
+            { label: 'INTERESSADO', valor: document.getElementById('interessado').value || 'Não informado' },
+            { label: 'ASSUNTO', valor: document.getElementById('assunto').value || 'Não informado' },
+            { label: 'MUNICÍPIO', valor: document.getElementById('municipio').value || 'Não informado' },
+            { label: 'COORDENADAS', valor: document.getElementById('coordenadas').value || 'Não informado' },
+            { label: 'ATIVIDADE', valor: document.getElementById('atividade').value || 'Não informado' },
+            { label: 'PROTOCOLO', valor: document.getElementById('protocolo').value || 'Não informado' }
+          ];
+          
+          const col1Width = 45;
+          const col2Width = contentWidth - col1Width;
+          const rowHeight = 8;
+          
+          pdf.setFont(PDF_CONFIG.font, "bold");
+          pdf.setFontSize(12);
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text("IDENTIFICAÇÃO DO EMPREENDIMENTO", marginLeft, yPos);
+          yPos += 4;
+          
+          // Cabeçalho da tabela
+          pdf.setFillColor(...PDF_CONFIG.colors.primary);
+          pdf.rect(marginLeft, yPos, col1Width, rowHeight, 'F');
+          pdf.rect(marginLeft + col1Width, yPos, col2Width, rowHeight, 'F');
+          
+          pdf.setFont(PDF_CONFIG.font, "bold");
+          pdf.setFontSize(10);
+          pdf.setTextColor(255, 255, 255);
+          pdf.text("Campo", marginLeft + 2, yPos + 5);
+          pdf.text("Valor", marginLeft + col1Width + 2, yPos + 5);
+          
+          yPos += rowHeight;
+          
+          dados.forEach((item, index) => {
+            if (index % 2 === 0) {
+              pdf.setFillColor(...PDF_CONFIG.colors.lightGray);
+            } else {
+              pdf.setFillColor(255, 255, 255);
+            }
+            
+            pdf.rect(marginLeft, yPos, col1Width, rowHeight, 'F');
+            pdf.rect(marginLeft + col1Width, yPos, col2Width, rowHeight, 'F');
+            
+            pdf.setDrawColor(...PDF_CONFIG.colors.tableBorder);
+            pdf.setLineWidth(0.1);
+            pdf.rect(marginLeft, yPos, col1Width, rowHeight);
+            pdf.rect(marginLeft + col1Width, yPos, col2Width, rowHeight);
+            
+            pdf.setFont(PDF_CONFIG.font, "bold");
+            pdf.setFontSize(9);
+            pdf.setTextColor(...PDF_CONFIG.colors.primary);
+            pdf.text(item.label, marginLeft + 2, yPos + 5);
+            
+            pdf.setFont(PDF_CONFIG.font, "normal");
+            pdf.setTextColor(0, 0, 0);
+            const valorTruncado = item.valor.length > 45 ? item.valor.substring(0, 42) + '...' : item.valor;
+            pdf.text(valorTruncado, marginLeft + col1Width + 2, yPos + 5);
+            
+            yPos += rowHeight;
+          });
+          
+          yPos += 5;
+        }
+        
+        // Função para adicionar imagem ao PDF
+        function adicionarImagemAoPDF(dataUrl, descricao, index) {
+          return new Promise((resolve) => {
+            try {
+              const img = new Image();
+              
+              img.onload = function() {
+                try {
+                  const maxWidth = 140;
+                  const maxHeight = 80;
+                  
+                  let width = this.width;
+                  let height = this.height;
+                  
+                  const ratio = Math.min(maxWidth / width, maxHeight / height);
+                  width = width * ratio;
+                  height = height * ratio;
+                  
+                  const xPos = (pageWidth - width) / 2;
+                  
+                  if (yPos + height + 25 > 270) {
+                    const paginaAtual = pdf.internal.getNumberOfPages();
+                    adicionarRodape(paginaAtual, paginaAtual + 1);
+                    pdf.addPage();
+                    adicionarCabecalho();
+                    yPos = 40;
+                  }
+                  
+                  pdf.setFont(PDF_CONFIG.font, "bold");
+                  pdf.setFontSize(11);
+                  pdf.setTextColor(...PDF_CONFIG.colors.primary);
+                  pdf.text(`Foto ${index + 1}: ${descricao || 'Registro fotográfico'}`, 
+                          pageWidth / 2, yPos, { align: 'center' });
+                  yPos += 6;
+                  
+                  pdf.addImage(dataUrl, 'JPEG', xPos, yPos, width, height);
+                  
+                  yPos += height + 10;
+                  resolve();
+                } catch (error) {
+                  console.error('Erro ao adicionar imagem:', error);
+                  pdf.setFont(PDF_CONFIG.font, "normal");
+                  pdf.setFontSize(10);
+                  pdf.setTextColor(0, 0, 0);
+                  pdf.text(`[Erro ao carregar foto ${index + 1}]`, marginLeft, yPos);
+                  yPos += lineHeight;
+                  resolve();
+                }
+              };
+              
+              img.onerror = function() {
+                pdf.setFont(PDF_CONFIG.font, "normal");
+                pdf.setFontSize(10);
+                pdf.setTextColor(0, 0, 0);
+                pdf.text(`[Erro ao carregar foto ${index + 1}]`, marginLeft, yPos);
+                yPos += lineHeight;
+                resolve();
+              };
+              
+              img.src = dataUrl;
+              
+            } catch (error) {
+              console.error('Erro geral:', error);
+              yPos += 10;
+              resolve();
+            }
+          });
+        }
+        
+        // Função principal assíncrona
+        const gerarPDFAssincrono = async () => {
+          adicionarCabecalho();
+          yPos = 45;
+          
+          // Título principal
+          pdf.setFont(PDF_CONFIG.font, "bold");
+          pdf.setFontSize(16);
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text('RELATÓRIO DE VISTORIA TÉCNICA', pageWidth / 2, yPos, { align: 'center' });
+          yPos += lineHeight + 4;
+          
+          // Tabela de identificação
+          criarTabelaIdentificacao();
+          
+          // Descrição da vistoria
+          adicionarTitulo('DESCRIÇÃO DA VISTORIA');
+          
+          const textoPreview = document.getElementById('textoPreview').innerText.replace('DESCRIÇÃO:', '').trim();
+          adicionarTexto(textoPreview || 'Nenhuma descrição disponível.');
+          
+          yPos += 2;
+          
+          // Constatações
+          adicionarTitulo('CONSTATAÇÕES');
+          
+          const temInconformidades = document.getElementById('inconformidades').checked;
+          const semInconformidades = document.getElementById('semInconformidades').checked;
+          const descInconformidades = document.getElementById('descricaoInconformidades').value || '';
+          const descSemInconformidades = document.getElementById('descricaoSemInconformidades').value || '';
+          
+          if (temInconformidades && descInconformidades) {
+            adicionarTexto(descInconformidades);
+          } else if (semInconformidades) {
+            adicionarTexto(descSemInconformidades || 'Não foram identificadas inconformidades durante a vistoria.');
+          } else {
+            adicionarTexto('Nenhuma constatação registrada.');
+          }
+          
+          yPos += 2;
+          
+          // Registros fotográficos
+          if (fotos.length > 0) {
+            adicionarTitulo('REGISTROS FOTOGRÁFICOS');
+            
+            pdf.setFont(PDF_CONFIG.font, "normal");
+            pdf.setFontSize(fontSize);
+            pdf.setTextColor(0, 0, 0);
+            pdf.text(`Total de ${fotos.length} foto(s) registrada(s):`, marginLeft, yPos);
+            yPos += lineHeight + 4;
+            
+            for (let i = 0; i < fotos.length; i++) {
+              await adicionarImagemAoPDF(fotos[i].dataUrl, fotos[i].descricao, i);
+            }
+          }
+          
+          // Conclusão
+          adicionarTitulo('CONCLUSÃO');
+          
+          pdf.setFont(PDF_CONFIG.font, "normal");
+          pdf.setFontSize(fontSize);
+          pdf.setTextColor(0, 0, 0);
+          pdf.text('Com base na vistoria técnica realizada, conclui-se que:', marginLeft, yPos);
+          yPos += lineHeight + 2;
+          
+          // Conformidades
+          const conformidadesValidas = conformidades.filter(c => c && c.trim() !== '');
+          if (conformidadesValidas.length > 0) {
+            pdf.setFont(PDF_CONFIG.font, "bold");
+            pdf.setTextColor(...PDF_CONFIG.colors.primary);
+            pdf.text('Conformidades identificadas:', marginLeft, yPos);
+            yPos += lineHeight;
+            
+            pdf.setFont(PDF_CONFIG.font, "normal");
+            pdf.setTextColor(0, 0, 0);
+            
+            conformidadesValidas.forEach((conformidade, index) => {
+              adicionarTexto(`${index + 1}. ${conformidade}`);
+            });
+            
+            yPos += 2;
+          }
+          
+          // Inconformidades
+          const inconformidadesValidas = inconformidades.filter(i => i && i.trim() !== '');
+          if (inconformidadesValidas.length > 0) {
+            pdf.setFont(PDF_CONFIG.font, "bold");
+            pdf.setTextColor(...PDF_CONFIG.colors.primary);
+            pdf.text('Inconformidades identificadas:', marginLeft, yPos);
+            yPos += lineHeight;
+            
+            pdf.setFont(PDF_CONFIG.font, "normal");
+            pdf.setTextColor(0, 0, 0);
+            
+            inconformidadesValidas.forEach((inconformidade, index) => {
+              adicionarTexto(`${index + 1}. ${inconformidade}`);
+            });
+            
+            yPos += 2;
+          }
+          
+          // Observações adicionais
+          const observacoes = document.getElementById('observacoesAdicionais').value;
+          if (observacoes && observacoes.trim() !== '') {
+            pdf.setFont(PDF_CONFIG.font, "bold");
+            pdf.setTextColor(...PDF_CONFIG.colors.primary);
+            pdf.text('Observações adicionais:', marginLeft, yPos);
+            yPos += lineHeight;
+            
+            pdf.setFont(PDF_CONFIG.font, "normal");
+            pdf.setTextColor(0, 0, 0);
+            adicionarTexto(observacoes);
+          }
+          
+          // Assinatura
+          verificarNovaPagina(30);
+          pdf.setFont(PDF_CONFIG.font, "bold");
+          pdf.setFontSize(14);
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text('ASSINATURA', marginLeft, yPos);
+          yPos += lineHeight + 4;
+          
+          const vistoriador = document.getElementById('assinaturaVistoriador').value || '______________________';
+          const cargo = document.getElementById('cargoVistoriador').value || 'Engenheiro/Responsável Técnico';
+          
+          pdf.setFont(PDF_CONFIG.font, "normal");
+          pdf.setFontSize(fontSize);
+          pdf.setTextColor(0, 0, 0);
+          pdf.text(`Vistoriador(a): ${vistoriador}`, marginLeft, yPos);
+          yPos += lineHeight;
+          pdf.text(`Cargo: ${cargo}`, marginLeft, yPos);
+          yPos += lineHeight + 5;
+          
+          // Linha de assinatura
+          pdf.setDrawColor(...PDF_CONFIG.colors.primary);
+          pdf.setLineWidth(0.3);
+          pdf.line(marginLeft, yPos, pageWidth - marginRight, yPos);
+          yPos += 4;
+          pdf.setFont(PDF_CONFIG.font, "normal");
+          pdf.setFontSize(9);
+          pdf.setTextColor(...PDF_CONFIG.colors.darkGray);
+          pdf.text('Assinatura', pageWidth / 2, yPos, { align: 'center' });
+          
+          // Adicionar rodapé em todas as páginas
+          const totalPaginas = pdf.internal.getNumberOfPages();
+          for (let i = 1; i <= totalPaginas; i++) {
+            pdf.setPage(i);
+            adicionarRodape(i, totalPaginas);
+          }
+          
+          // Salvar PDF
+          const protocolo = document.getElementById('protocolo').value || 'sem_protocolo';
+          const data = new Date();
+          const timestamp = `${data.getDate()}${data.getMonth()+1}${data.getFullYear()}_${data.getHours()}${data.getMinutes()}`;
+          const nomeArquivo = `Relatorio_Vistoria_${protocolo.replace(/\s+/g, '_')}_${timestamp}.pdf`;
+          
+          pdf.save(nomeArquivo);
+          mostrarStatus('PDF gerado com formatação ABNT!');
+        };
+        
+        gerarPDFAssincrono().catch(error => {
+          console.error('Erro na geração do PDF:', error);
+          mostrarStatus(`Erro ao gerar PDF: ${error.message}`, 'error');
+        });
+        
+      } catch (error) {
+        console.error('Erro ao iniciar geração do PDF:', error);
+        mostrarStatus(`Erro ao gerar PDF: ${error.message}`, 'error');
+      }
+    }
+    
+    function limparFormulario() {
+      if (confirm('Tem certeza que deseja limpar todo o formulário? Todos os dados serão perdidos.')) {
+        document.getElementById('formularioIdentificacao').reset();
+        
+        const hoje = new Date();
+        const meses = [
+          "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+          "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+        ];
+        
+        document.getElementById('dia').value = hoje.getDate();
+        document.getElementById('mes').value = meses[hoje.getMonth()];
+        document.getElementById('ano').value = hoje.getFullYear();
+        
+        document.getElementById('subestacao').value = '';
+        document.getElementById('empresa').value = '';
+        
+        document.getElementById('inconformidades').checked = false;
+        document.getElementById('semInconformidades').checked = false;
+        document.getElementById('desc-inconformidades').style.display = 'none';
+        document.getElementById('desc-sem-inconformidades').style.display = 'none';
+        document.getElementById('container-inconformidades').classList.remove('checked');
+        document.getElementById('container-sem-inconformidades').classList.remove('checked');
+        
+        document.getElementById('descricaoInconformidades').value = '';
+        document.getElementById('descricaoSemInconformidades').value = '';
+        document.getElementById('observacoesAdicionais').value = '';
+        
+        tecnicos = [];
+        representantes = [];
+        conformidades = [];
+        inconformidades = [];
+        fotos = [];
+        
+        renderizarTecnicos();
+        renderizarRepresentantes();
+        renderizarConformidades();
+        renderizarInconformidades();
+        renderizarFotos();
+        atualizarContadorFotos();
+        
+        document.getElementById('assinaturaVistoriador').value = '';
+        document.getElementById('cargoVistoriador').value = 'Engenheiro/Responsável Técnico';
+        
+        atualizarTextoGerado();
+        
+        localStorage.removeItem('relatorioVistoriaSubestacao');
+        
+        mostrarStatus('Formulário limpo com sucesso!');
+      }
+    }
+    
+    function mostrarStatus(mensagem, tipo = 'success') {
+      const statusBar = document.getElementById('statusBar');
+      statusBar.textContent = mensagem;
+      statusBar.style.display = 'block';
+      
+      if (tipo === 'error') {
+        statusBar.style.background = 'linear-gradient(135deg, #dc3545, #c82333)';
+      } else if (tipo === 'info') {
+        statusBar.style.background = 'linear-gradient(135deg, #17a2b8, #138496)';
+      } else {
+        statusBar.style.background = 'linear-gradient(135deg, var(--accent-color), #20c997)';
+      }
+      
+      setTimeout(() => {
+        statusBar.style.display = 'none';
+      }, 3000);
+    }
+    
+    // Auto-save a cada 30 segundos
+    setInterval(() => {
+      if (document.getElementById('interessado').value ||
+          document.getElementById('protocolo').value) {
+        salvarFormulario();
+      }
+    }, 30000);
+    
+    window.addEventListener('beforeunload', function(e) {
+      if (document.getElementById('interessado').value ||
+          document.getElementById('protocolo').value) {
+        salvarFormulario();
+      }
+    });
+  </script>
+</body>
+</html>
