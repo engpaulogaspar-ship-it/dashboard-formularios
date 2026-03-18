@@ -29,6 +29,45 @@
     .dashboard-container {
       max-width: 1400px;
       margin: 0 auto;
+      position: relative;
+    }
+
+    /* Botão Voltar ao Dashboard */
+    .btn-voltar-dashboard {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-voltar-dashboard:hover {
+      transform: translateX(-5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    }
+
+    .btn-voltar-dashboard i {
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-voltar-dashboard:hover i {
+      transform: translateX(-3px);
     }
 
     /* Header Moderno com Logos nos lados */
@@ -775,6 +814,14 @@
     }
 
     @media (max-width: 992px) {
+      .btn-voltar-dashboard {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin-bottom: 15px;
+        width: fit-content;
+      }
+
       .dashboard-header {
         flex-direction: column;
         gap: 15px;
@@ -804,6 +851,10 @@
         min-width: 140px;
         padding: 12px 20px;
         font-size: 14px;
+      }
+      .btn-voltar-dashboard {
+        padding: 8px 16px;
+        font-size: 0.9rem;
       }
       .field-item {
         flex-direction: column;
@@ -848,6 +899,11 @@
 
 <body>
   <div class="dashboard-container">
+    <!-- Botão Voltar ao Dashboard (ADICIONADO) -->
+    <button class="btn-voltar-dashboard no-print" onclick="voltarDashboard()">
+      <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+    </button>
+
     <!-- Header Moderno com Logos nos Lados -->
     <div class="dashboard-header">
       <div class="logo-left">
@@ -1181,6 +1237,15 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ============================================
+    // FUNÇÃO PARA VOLTAR AO DASHBOARD (ADICIONADA)
+    // ============================================
+    function voltarDashboard() {
+      if (confirm('Deseja voltar ao dashboard? Os dados não salvos serão perdidos.')) {
+        window.location.href = 'index.html';
+      }
+    }
+
+    // ============================================
     // CONFIGURAÇÕES DO PDF CONFORME ABNT
     // ============================================
     const PDF_CONFIG = {
@@ -1208,7 +1273,6 @@
       pageWidth: 210,
       marginLeft: 25,
       marginRight: 25,
-      // Configurações ABNT
       font: "helvetica",
       fontSize: 12,
       lineHeight: 6
@@ -1821,11 +1885,20 @@
         inconformidades: inconformidades,
         observacoesAdicionais: document.getElementById('observacoesAdicionais').value,
         assinaturaVistoriador: document.getElementById('assinaturaVistoriador').value,
-        cargoVistoriador: document.getElementById('cargoVistoriador').value
+        cargoVistoriador: document.getElementById('cargoVistoriador').value,
+        dataSalvamento: new Date().toISOString()
       };
       
       localStorage.setItem('relatorioVistoriaSubestacao', JSON.stringify(dados));
+      atualizarStatusSalvo();
       mostrarStatus('Formulário salvo localmente!');
+      
+      // Notificar dashboard se existir
+      if (window.opener && !window.opener.closed) {
+        try {
+          window.opener.notificarSalvamento(2);
+        } catch (e) {}
+      }
     }
     
     function carregarFormulario() {
@@ -1880,6 +1953,7 @@
         atualizarTextoGerado();
         atualizarContadorFotos();
         
+        atualizarStatusSalvo();
         mostrarStatus('Dados carregados com sucesso!');
       } catch (e) {
         console.error('Erro ao carregar dados:', e);
@@ -1887,7 +1961,63 @@
       }
     }
     
-    // Função principal para gerar PDF com formatação ABNT
+    function atualizarStatusSalvo() {
+      // Esta função pode ser implementada se houver badge de status no formulário
+      console.log('Formulário salvo');
+    }
+    
+    function limparFormulario() {
+      if (confirm('Tem certeza que deseja limpar todo o formulário? Todos os dados serão perdidos.')) {
+        document.getElementById('formularioIdentificacao').reset();
+        
+        const hoje = new Date();
+        const meses = [
+          "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+          "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+        ];
+        
+        document.getElementById('dia').value = hoje.getDate();
+        document.getElementById('mes').value = meses[hoje.getMonth()];
+        document.getElementById('ano').value = hoje.getFullYear();
+        
+        document.getElementById('subestacao').value = '';
+        document.getElementById('empresa').value = '';
+        
+        document.getElementById('inconformidades').checked = false;
+        document.getElementById('semInconformidades').checked = false;
+        document.getElementById('desc-inconformidades').style.display = 'none';
+        document.getElementById('desc-sem-inconformidades').style.display = 'none';
+        document.getElementById('container-inconformidades').classList.remove('checked');
+        document.getElementById('container-sem-inconformidades').classList.remove('checked');
+        
+        document.getElementById('descricaoInconformidades').value = '';
+        document.getElementById('descricaoSemInconformidades').value = '';
+        document.getElementById('observacoesAdicionais').value = '';
+        
+        tecnicos = [];
+        representantes = [];
+        conformidades = [];
+        inconformidades = [];
+        fotos = [];
+        
+        renderizarTecnicos();
+        renderizarRepresentantes();
+        renderizarConformidades();
+        renderizarInconformidades();
+        renderizarFotos();
+        atualizarContadorFotos();
+        
+        document.getElementById('assinaturaVistoriador').value = '';
+        document.getElementById('cargoVistoriador').value = 'Engenheiro/Responsável Técnico';
+        
+        atualizarTextoGerado();
+        
+        localStorage.removeItem('relatorioVistoriaSubestacao');
+        
+        mostrarStatus('Formulário limpo com sucesso!');
+      }
+    }
+    
     function gerarPDF() {
       mostrarStatus('Gerando PDF conforme normas ABNT...', 'info');
       
@@ -1904,10 +2034,6 @@
         const marginRight = 25;
         const contentWidth = pageWidth - marginLeft - marginRight;
         let yPos = 25;
-        
-        // Configurações ABNT
-        const fontSize = 12;
-        const lineHeight = 6;
         
         // Função para adicionar cabeçalho
         function adicionarCabecalho() {
@@ -1977,7 +2103,7 @@
           if (!texto) return;
           
           pdf.setFont(PDF_CONFIG.font, negrito ? "bold" : "normal");
-          pdf.setFontSize(fontSize);
+          pdf.setFontSize(PDF_CONFIG.fontSize);
           pdf.setTextColor(0, 0, 0);
           
           const lines = pdf.splitTextToSize(texto, contentWidth);
@@ -1991,7 +2117,7 @@
               yPos = 40;
             }
             pdf.text(lines[i], marginLeft, yPos);
-            yPos += lineHeight;
+            yPos += PDF_CONFIG.lineHeight;
           }
           yPos += 2;
         }
@@ -2003,141 +2129,7 @@
           pdf.setFontSize(14);
           pdf.setTextColor(...PDF_CONFIG.colors.primary);
           pdf.text(texto, marginLeft, yPos);
-          yPos += lineHeight + 2;
-        }
-        
-        // Função para criar tabela elegante
-        function criarTabelaIdentificacao() {
-          const dados = [
-            { label: 'INTERESSADO', valor: document.getElementById('interessado').value || 'Não informado' },
-            { label: 'ASSUNTO', valor: document.getElementById('assunto').value || 'Não informado' },
-            { label: 'MUNICÍPIO', valor: document.getElementById('municipio').value || 'Não informado' },
-            { label: 'COORDENADAS', valor: document.getElementById('coordenadas').value || 'Não informado' },
-            { label: 'ATIVIDADE', valor: document.getElementById('atividade').value || 'Não informado' },
-            { label: 'PROTOCOLO', valor: document.getElementById('protocolo').value || 'Não informado' }
-          ];
-          
-          const col1Width = 45;
-          const col2Width = contentWidth - col1Width;
-          const rowHeight = 8;
-          
-          pdf.setFont(PDF_CONFIG.font, "bold");
-          pdf.setFontSize(12);
-          pdf.setTextColor(...PDF_CONFIG.colors.primary);
-          pdf.text("IDENTIFICAÇÃO DO EMPREENDIMENTO", marginLeft, yPos);
-          yPos += 4;
-          
-          // Cabeçalho da tabela
-          pdf.setFillColor(...PDF_CONFIG.colors.primary);
-          pdf.rect(marginLeft, yPos, col1Width, rowHeight, 'F');
-          pdf.rect(marginLeft + col1Width, yPos, col2Width, rowHeight, 'F');
-          
-          pdf.setFont(PDF_CONFIG.font, "bold");
-          pdf.setFontSize(10);
-          pdf.setTextColor(255, 255, 255);
-          pdf.text("Campo", marginLeft + 2, yPos + 5);
-          pdf.text("Valor", marginLeft + col1Width + 2, yPos + 5);
-          
-          yPos += rowHeight;
-          
-          dados.forEach((item, index) => {
-            if (index % 2 === 0) {
-              pdf.setFillColor(...PDF_CONFIG.colors.lightGray);
-            } else {
-              pdf.setFillColor(255, 255, 255);
-            }
-            
-            pdf.rect(marginLeft, yPos, col1Width, rowHeight, 'F');
-            pdf.rect(marginLeft + col1Width, yPos, col2Width, rowHeight, 'F');
-            
-            pdf.setDrawColor(...PDF_CONFIG.colors.tableBorder);
-            pdf.setLineWidth(0.1);
-            pdf.rect(marginLeft, yPos, col1Width, rowHeight);
-            pdf.rect(marginLeft + col1Width, yPos, col2Width, rowHeight);
-            
-            pdf.setFont(PDF_CONFIG.font, "bold");
-            pdf.setFontSize(9);
-            pdf.setTextColor(...PDF_CONFIG.colors.primary);
-            pdf.text(item.label, marginLeft + 2, yPos + 5);
-            
-            pdf.setFont(PDF_CONFIG.font, "normal");
-            pdf.setTextColor(0, 0, 0);
-            const valorTruncado = item.valor.length > 45 ? item.valor.substring(0, 42) + '...' : item.valor;
-            pdf.text(valorTruncado, marginLeft + col1Width + 2, yPos + 5);
-            
-            yPos += rowHeight;
-          });
-          
-          yPos += 5;
-        }
-        
-        // Função para adicionar imagem ao PDF
-        function adicionarImagemAoPDF(dataUrl, descricao, index) {
-          return new Promise((resolve) => {
-            try {
-              const img = new Image();
-              
-              img.onload = function() {
-                try {
-                  const maxWidth = 140;
-                  const maxHeight = 80;
-                  
-                  let width = this.width;
-                  let height = this.height;
-                  
-                  const ratio = Math.min(maxWidth / width, maxHeight / height);
-                  width = width * ratio;
-                  height = height * ratio;
-                  
-                  const xPos = (pageWidth - width) / 2;
-                  
-                  if (yPos + height + 25 > 270) {
-                    const paginaAtual = pdf.internal.getNumberOfPages();
-                    adicionarRodape(paginaAtual, paginaAtual + 1);
-                    pdf.addPage();
-                    adicionarCabecalho();
-                    yPos = 40;
-                  }
-                  
-                  pdf.setFont(PDF_CONFIG.font, "bold");
-                  pdf.setFontSize(11);
-                  pdf.setTextColor(...PDF_CONFIG.colors.primary);
-                  pdf.text(`Foto ${index + 1}: ${descricao || 'Registro fotográfico'}`, 
-                          pageWidth / 2, yPos, { align: 'center' });
-                  yPos += 6;
-                  
-                  pdf.addImage(dataUrl, 'JPEG', xPos, yPos, width, height);
-                  
-                  yPos += height + 10;
-                  resolve();
-                } catch (error) {
-                  console.error('Erro ao adicionar imagem:', error);
-                  pdf.setFont(PDF_CONFIG.font, "normal");
-                  pdf.setFontSize(10);
-                  pdf.setTextColor(0, 0, 0);
-                  pdf.text(`[Erro ao carregar foto ${index + 1}]`, marginLeft, yPos);
-                  yPos += lineHeight;
-                  resolve();
-                }
-              };
-              
-              img.onerror = function() {
-                pdf.setFont(PDF_CONFIG.font, "normal");
-                pdf.setFontSize(10);
-                pdf.setTextColor(0, 0, 0);
-                pdf.text(`[Erro ao carregar foto ${index + 1}]`, marginLeft, yPos);
-                yPos += lineHeight;
-                resolve();
-              };
-              
-              img.src = dataUrl;
-              
-            } catch (error) {
-              console.error('Erro geral:', error);
-              yPos += 10;
-              resolve();
-            }
-          });
+          yPos += PDF_CONFIG.lineHeight + 2;
         }
         
         // Função principal assíncrona
@@ -2150,10 +2142,26 @@
           pdf.setFontSize(16);
           pdf.setTextColor(...PDF_CONFIG.colors.primary);
           pdf.text('RELATÓRIO DE VISTORIA TÉCNICA', pageWidth / 2, yPos, { align: 'center' });
-          yPos += lineHeight + 4;
+          yPos += PDF_CONFIG.lineHeight + 4;
           
-          // Tabela de identificação
-          criarTabelaIdentificacao();
+          // Identificação
+          adicionarTitulo('IDENTIFICAÇÃO DO EMPREENDIMENTO');
+          
+          const interessado = document.getElementById('interessado').value || 'Não informado';
+          const assunto = document.getElementById('assunto').value || 'Não informado';
+          const municipio = document.getElementById('municipio').value || 'Não informado';
+          const coordenadas = document.getElementById('coordenadas').value || 'Não informado';
+          const atividade = document.getElementById('atividade').value || 'Não informado';
+          const protocolo = document.getElementById('protocolo').value || 'Não informado';
+          
+          adicionarTexto(`Interessado: ${interessado}`);
+          adicionarTexto(`Assunto: ${assunto}`);
+          adicionarTexto(`Município: ${municipio}`);
+          adicionarTexto(`Coordenadas: ${coordenadas}`);
+          adicionarTexto(`Atividade: ${atividade}`);
+          adicionarTexto(`Protocolo: ${protocolo}`);
+          
+          yPos += 5;
           
           // Descrição da vistoria
           adicionarTitulo('DESCRIÇÃO DA VISTORIA');
@@ -2179,31 +2187,16 @@
             adicionarTexto('Nenhuma constatação registrada.');
           }
           
-          yPos += 2;
-          
-          // Registros fotográficos
-          if (fotos.length > 0) {
-            adicionarTitulo('REGISTROS FOTOGRÁFICOS');
-            
-            pdf.setFont(PDF_CONFIG.font, "normal");
-            pdf.setFontSize(fontSize);
-            pdf.setTextColor(0, 0, 0);
-            pdf.text(`Total de ${fotos.length} foto(s) registrada(s):`, marginLeft, yPos);
-            yPos += lineHeight + 4;
-            
-            for (let i = 0; i < fotos.length; i++) {
-              await adicionarImagemAoPDF(fotos[i].dataUrl, fotos[i].descricao, i);
-            }
-          }
+          yPos += 5;
           
           // Conclusão
           adicionarTitulo('CONCLUSÃO');
           
           pdf.setFont(PDF_CONFIG.font, "normal");
-          pdf.setFontSize(fontSize);
+          pdf.setFontSize(PDF_CONFIG.fontSize);
           pdf.setTextColor(0, 0, 0);
           pdf.text('Com base na vistoria técnica realizada, conclui-se que:', marginLeft, yPos);
-          yPos += lineHeight + 2;
+          yPos += PDF_CONFIG.lineHeight + 2;
           
           // Conformidades
           const conformidadesValidas = conformidades.filter(c => c && c.trim() !== '');
@@ -2211,7 +2204,7 @@
             pdf.setFont(PDF_CONFIG.font, "bold");
             pdf.setTextColor(...PDF_CONFIG.colors.primary);
             pdf.text('Conformidades identificadas:', marginLeft, yPos);
-            yPos += lineHeight;
+            yPos += PDF_CONFIG.lineHeight;
             
             pdf.setFont(PDF_CONFIG.font, "normal");
             pdf.setTextColor(0, 0, 0);
@@ -2229,7 +2222,7 @@
             pdf.setFont(PDF_CONFIG.font, "bold");
             pdf.setTextColor(...PDF_CONFIG.colors.primary);
             pdf.text('Inconformidades identificadas:', marginLeft, yPos);
-            yPos += lineHeight;
+            yPos += PDF_CONFIG.lineHeight;
             
             pdf.setFont(PDF_CONFIG.font, "normal");
             pdf.setTextColor(0, 0, 0);
@@ -2247,7 +2240,7 @@
             pdf.setFont(PDF_CONFIG.font, "bold");
             pdf.setTextColor(...PDF_CONFIG.colors.primary);
             pdf.text('Observações adicionais:', marginLeft, yPos);
-            yPos += lineHeight;
+            yPos += PDF_CONFIG.lineHeight;
             
             pdf.setFont(PDF_CONFIG.font, "normal");
             pdf.setTextColor(0, 0, 0);
@@ -2260,18 +2253,18 @@
           pdf.setFontSize(14);
           pdf.setTextColor(...PDF_CONFIG.colors.primary);
           pdf.text('ASSINATURA', marginLeft, yPos);
-          yPos += lineHeight + 4;
+          yPos += PDF_CONFIG.lineHeight + 4;
           
           const vistoriador = document.getElementById('assinaturaVistoriador').value || '______________________';
           const cargo = document.getElementById('cargoVistoriador').value || 'Engenheiro/Responsável Técnico';
           
           pdf.setFont(PDF_CONFIG.font, "normal");
-          pdf.setFontSize(fontSize);
+          pdf.setFontSize(PDF_CONFIG.fontSize);
           pdf.setTextColor(0, 0, 0);
           pdf.text(`Vistoriador(a): ${vistoriador}`, marginLeft, yPos);
-          yPos += lineHeight;
+          yPos += PDF_CONFIG.lineHeight;
           pdf.text(`Cargo: ${cargo}`, marginLeft, yPos);
-          yPos += lineHeight + 5;
+          yPos += PDF_CONFIG.lineHeight + 5;
           
           // Linha de assinatura
           pdf.setDrawColor(...PDF_CONFIG.colors.primary);
@@ -2291,10 +2284,10 @@
           }
           
           // Salvar PDF
-          const protocolo = document.getElementById('protocolo').value || 'sem_protocolo';
+          const protocoloNum = document.getElementById('protocolo').value || 'sem_protocolo';
           const data = new Date();
           const timestamp = `${data.getDate()}${data.getMonth()+1}${data.getFullYear()}_${data.getHours()}${data.getMinutes()}`;
-          const nomeArquivo = `Relatorio_Vistoria_${protocolo.replace(/\s+/g, '_')}_${timestamp}.pdf`;
+          const nomeArquivo = `Relatorio_Vistoria_Subestacao_${protocoloNum.replace(/\s+/g, '_')}_${timestamp}.pdf`;
           
           pdf.save(nomeArquivo);
           mostrarStatus('PDF gerado com formatação ABNT!');
@@ -2308,58 +2301,6 @@
       } catch (error) {
         console.error('Erro ao iniciar geração do PDF:', error);
         mostrarStatus(`Erro ao gerar PDF: ${error.message}`, 'error');
-      }
-    }
-    
-    function limparFormulario() {
-      if (confirm('Tem certeza que deseja limpar todo o formulário? Todos os dados serão perdidos.')) {
-        document.getElementById('formularioIdentificacao').reset();
-        
-        const hoje = new Date();
-        const meses = [
-          "janeiro", "fevereiro", "março", "abril", "maio", "junho",
-          "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
-        ];
-        
-        document.getElementById('dia').value = hoje.getDate();
-        document.getElementById('mes').value = meses[hoje.getMonth()];
-        document.getElementById('ano').value = hoje.getFullYear();
-        
-        document.getElementById('subestacao').value = '';
-        document.getElementById('empresa').value = '';
-        
-        document.getElementById('inconformidades').checked = false;
-        document.getElementById('semInconformidades').checked = false;
-        document.getElementById('desc-inconformidades').style.display = 'none';
-        document.getElementById('desc-sem-inconformidades').style.display = 'none';
-        document.getElementById('container-inconformidades').classList.remove('checked');
-        document.getElementById('container-sem-inconformidades').classList.remove('checked');
-        
-        document.getElementById('descricaoInconformidades').value = '';
-        document.getElementById('descricaoSemInconformidades').value = '';
-        document.getElementById('observacoesAdicionais').value = '';
-        
-        tecnicos = [];
-        representantes = [];
-        conformidades = [];
-        inconformidades = [];
-        fotos = [];
-        
-        renderizarTecnicos();
-        renderizarRepresentantes();
-        renderizarConformidades();
-        renderizarInconformidades();
-        renderizarFotos();
-        atualizarContadorFotos();
-        
-        document.getElementById('assinaturaVistoriador').value = '';
-        document.getElementById('cargoVistoriador').value = 'Engenheiro/Responsável Técnico';
-        
-        atualizarTextoGerado();
-        
-        localStorage.removeItem('relatorioVistoriaSubestacao');
-        
-        mostrarStatus('Formulário limpo com sucesso!');
       }
     }
     
