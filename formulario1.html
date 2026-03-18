@@ -1454,12 +1454,14 @@
             pdf.setFont(PDF_CONFIG.font || "helvetica", "bold");
             pdf.setFontSize(14);
             pdf.setTextColor(...PDF_CONFIG.colors.primary);
+            pdf.text(PDF_CONFIG.relatorioText.linha2, pageWidth / 2, 15, { align: 'center' });
+            
+            // Segunda linha - INSTITUTO ÁGUA E TERRA - IAT
+            pdf.setFont(PDF_CONFIG.font || "helvetica", "bold");
+            pdf.setFontSize(14);
+            pdf.setTextColor(...PDF_CONFIG.colors.primary);
             pdf.text(PDF_CONFIG.relatorioText.linha1, pageWidth / 2, 15, { align: 'center' });
-            
-            // Segunda linha - em branco (como no Formulário 1)
-            pdf.setFontSize(12);
-            pdf.text("", pageWidth / 2, 22, { align: 'center' });
-            
+                       
             // Terceira linha - RELATÓRIO DE VISTORIA TÉCNICA
             pdf.setFontSize(12);
             pdf.setFont(PDF_CONFIG.font || "helvetica", "normal");
