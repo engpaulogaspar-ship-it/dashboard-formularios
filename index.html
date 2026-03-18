@@ -3,155 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistema de Formulários IAT/ERCBA</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>IAT - Sistema de Vistorias</title>
+    
+    <!-- Font Awesome via CDN (funciona offline após primeiro acesso) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fallback local para Font Awesome (caso não tenha internet) -->
+    <style>
+        /* Fallback icons caso o CDN falhe */
+        .fallback-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: currentColor;
+            mask-size: contain;
+            -webkit-mask-size: contain;
+        }
+    </style>
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="dashboard-wrapper">
-        <!-- Header com Logos -->
-        <header class="dashboard-header">
-            <div class="header-left">
-                <img src="https://upload.wikimedia.org/wikipedia/pt/b/ba/Logo_IAT_PR.png" 
-                     alt="Logo ERCBA" 
-                     class="header-logo"
-                     onerror="this.style.display='none'">
-            </div>
-            
-            <div class="header-center">
-                <h1>SISTEMA DE FORMULÁRIOS</h1>
-                <h2>INSTITUTO ÁGUA E TERRA - IAT</h2>
-                <p>Escolha o formulário desejado para iniciar</p>
-            </div>
-            
-            <div class="header-right">
-                <img src="https://image2url.com/r2/default/images/1770223607016-99c57976-38bc-462d-aaac-01c87703b919.png" 
-                     alt="Logo IAT" 
-                     class="header-logo"
-                     onerror="this.style.display='none'">
+    <div class="iat-system">
+        <!-- Header minimalista -->
+        <header class="iat-header">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23003366'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial'%3EIAT%3C/text%3E%3C/svg%3E" 
+                         alt="IAT" 
+                         class="logo-fallback"
+                         onerror="this.style.display='none'">
+                </div>
+                <h1 class="iat-title">SISTEMA DE VISTORIAS TÉCNICAS</h1>
+                <div class="offline-badge" id="offlineBadge" style="display: none;">
+                    <i class="fas fa-wifi-slash"></i> Modo Offline
+                </div>
             </div>
         </header>
 
-        <!-- Cards de Formulários -->
-        <div class="cards-container">
-            <!-- Card Formulário 1 -->
-            <div class="form-card" onclick="abrirFormulario('formulario1.html')">
-                <div class="card-badge">Formulário 1</div>
-                <div class="card-icon">
-                    <i class="fas fa-clipboard-check"></i>
-                </div>
-                <h3>RELATÓRIO DE VISTORIA TÉCNICA</h3>
-                <p class="card-description">
-                    Formulário completo para vistorias técnicas com condicionantes, 
-                    checklist in-loco e observações adicionais.
-                </p>
-                
-                <div class="features-list">
-                    <span><i class="fas fa-check-circle"></i> Condicionantes</span>
-                    <span><i class="fas fa-tasks"></i> Checklist</span>
-                    <span><i class="fas fa-file-pdf"></i> Exportar PDF</span>
-                    <span><i class="fas fa-camera"></i> Registros</span>
-                </div>
-                
-                <div class="card-footer">
-                    <div class="status-indicator">
-                        <i class="fas fa-circle"></i> Ativo
+        <!-- Cards de seleção - APENAS 2 BOTÕES -->
+        <main class="selection-container">
+            <div class="cards-grid">
+                <!-- Card 1: Relatório de Vistoria Técnica -->
+                <div class="select-card" onclick="abrirFormulario('formulario1.html')" role="button" tabindex="0">
+                    <div class="card-content">
+                        <div class="card-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h2 class="card-title">RELATÓRIO DE VISTORIA TÉCNICA</h2>
+                        <p class="card-subtitle">Formulário completo para vistorias</p>
+                        <div class="card-features">
+                            <span class="feature"><i class="fas fa-check-circle"></i> Condicionantes</span>
+                            <span class="feature"><i class="fas fa-tasks"></i> Checklist</span>
+                            <span class="feature"><i class="fas fa-file-pdf"></i> PDF</span>
+                        </div>
                     </div>
-                    <button class="btn-acessar" onclick="event.stopPropagation(); abrirFormulario('formulario1.html')">
-                        Acessar <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Card Formulário 2 -->
-            <div class="form-card" onclick="abrirFormulario('formulario2.html')">
-                <div class="card-badge">Formulário 2</div>
-                <div class="card-icon">
-                    <i class="fas fa-bolt"></i>
-                </div>
-                <h3>RELATÓRIO DE VISTORIA - SUBESTAÇÃO</h3>
-                <p class="card-description">
-                    Formulário especializado para vistorias em subestações com 
-                    identificação, constatações e registros fotográficos.
-                </p>
-                
-                <div class="features-list">
-                    <span><i class="fas fa-fingerprint"></i> Identificação</span>
-                    <span><i class="fas fa-search"></i> Constatações</span>
-                    <span><i class="fas fa-camera-retro"></i> Galeria de Fotos</span>
-                    <span><i class="fas fa-file-pdf"></i> PDF ABNT</span>
-                </div>
-                
-                <div class="card-footer">
-                    <div class="status-indicator">
-                        <i class="fas fa-circle"></i> Ativo
+                    <div class="card-footer">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Disponível offline</span>
+                        <button class="btn-acessar" onclick="event.stopPropagation(); abrirFormulario('formulario1.html')">
+                            Acessar <i class="fas fa-arrow-right"></i>
+                        </button>
                     </div>
-                    <button class="btn-acessar" onclick="event.stopPropagation(); abrirFormulario('formulario2.html')">
-                        Acessar <i class="fas fa-arrow-right"></i>
-                    </button>
                 </div>
-            </div>
-        </div>
 
-        <!-- Painel de Informações -->
-        <div class="info-panel">
-            <div class="info-card">
-                <i class="fas fa-database"></i>
-                <div>
-                    <h4>Armazenamento Local</h4>
-                    <p>Dados salvos automaticamente no seu navegador</p>
+                <!-- Card 2: Relatório de Vistoria - Subestação -->
+                <div class="select-card" onclick="abrirFormulario('formulario2.html')" role="button" tabindex="0">
+                    <div class="card-content">
+                        <div class="card-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h2 class="card-title">RELATÓRIO DE VISTORIA - SUBESTAÇÃO</h2>
+                        <p class="card-subtitle">Especializado para subestações</p>
+                        <div class="card-features">
+                            <span class="feature"><i class="fas fa-fingerprint"></i> Identificação</span>
+                            <span class="feature"><i class="fas fa-camera"></i> Fotos</span>
+                            <span class="feature"><i class="fas fa-file-pdf"></i> PDF ABNT</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Disponível offline</span>
+                        <button class="btn-acessar" onclick="event.stopPropagation(); abrirFormulario('formulario2.html')">
+                            Acessar <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            
-            <div class="info-card">
-                <i class="fas fa-file-pdf"></i>
-                <div>
-                    <h4>Exportação PDF</h4>
-                    <p>Gere relatórios em PDF com formatação profissional</p>
-                </div>
-            </div>
-            
-            <div class="info-card">
-                <i class="fas fa-mobile-alt"></i>
-                <div>
-                    <h4>Responsivo</h4>
-                    <p>Funciona em computadores, tablets e celulares</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Status dos Formulários -->
-        <div class="status-panel">
-            <h4><i class="fas fa-chart-line"></i> Status dos Formulários</h4>
-            <div class="status-grid">
-                <div class="status-item" id="statusForm1">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Formulário 1</span>
-                    <span class="status-badge" id="badgeForm1">Verificando...</span>
+            <!-- Status do sistema (apenas informação) -->
+            <div class="system-status">
+                <div class="status-item">
+                    <i class="fas fa-database"></i>
+                    <span>Armazenamento local ativo</span>
                 </div>
-                <div class="status-item" id="statusForm2">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Formulário 2</span>
-                    <span class="status-badge" id="badgeForm2">Verificando...</span>
+                <div class="status-item">
+                    <i class="fas fa-save"></i>
+                    <span>Auto-save a cada 30s</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-wifi-slash"></i>
+                    <span>Funciona sem internet</span>
                 </div>
             </div>
-        </div>
+        </main>
 
-        <!-- Footer -->
-        <footer class="dashboard-footer">
-            <p>
-                <i class="fas fa-shield-alt"></i> 
-                Sistema Integrado de Formulários - IAT/ERCBA
-            </p>
-            <p class="footer-note">
-                Selecione um formulário para iniciar o preenchimento
-            </p>
+        <!-- Footer simples -->
+        <footer class="iat-footer">
+            <p>© 2024 Instituto Água e Terra - IAT</p>
+            <p class="footer-note">Todos os dados são salvos localmente no seu dispositivo</p>
         </footer>
     </div>
 
     <!-- Toast de notificação -->
-    <div class="toast-notification" id="statusToast">
+    <div id="statusToast" class="toast-notification">
         <i class="fas fa-info-circle"></i>
         <span id="toastMessage"></span>
     </div>
