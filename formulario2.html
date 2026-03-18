@@ -899,7 +899,7 @@
 
 <body>
   <div class="dashboard-container">
-    <!-- Botão Voltar ao Dashboard (ADICIONADO) -->
+    <!-- Botão Voltar ao Dashboard -->
     <button class="btn-voltar-dashboard no-print" onclick="voltarDashboard()">
       <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
     </button>
@@ -1237,7 +1237,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ============================================
-    // FUNÇÃO PARA VOLTAR AO DASHBOARD (ADICIONADA)
+    // FUNÇÃO PARA VOLTAR AO DASHBOARD
     // ============================================
     function voltarDashboard() {
       if (confirm('Deseja voltar ao dashboard? Os dados não salvos serão perdidos.')) {
@@ -1246,12 +1246,12 @@
     }
 
     // ============================================
-    // CONFIGURAÇÕES DO PDF CONFORME ABNT
+    // CONFIGURAÇÕES DO PDF - IGUAL AO FORMULÁRIO 1
     // ============================================
     const PDF_CONFIG = {
       relatorioText: {
-        linha1: "DIVISÃO DE LICENCIAMENTO ESTRATÉGICO",
-        linha2: "INSTITUTO ÁGUA E TERRA - IAT",
+        linha1: "ESCRITÓRIO REGIONAL DE CURITIBA",
+        linha2: "SETOR DE LICENCIAMENTO DE ENERGIA",
         linha3: "RELATÓRIO DE VISTORIA TÉCNICA"
       },
       footerText: {
@@ -1262,20 +1262,12 @@
       colors: {
         primary: [0, 51, 102],
         secondary: [0, 86, 179],
-        lightGray: [245, 245, 245],
-        mediumGray: [200, 200, 200],
-        darkGray: [80, 80, 80],
-        tableHeader: [0, 51, 102],
-        tableRow1: [250, 250, 250],
-        tableRow2: [255, 255, 255],
-        tableBorder: [180, 180, 180]
+        lightGray: [240, 240, 240],
+        darkGray: [100, 100, 100]
       },
       pageWidth: 210,
-      marginLeft: 25,
-      marginRight: 25,
-      font: "helvetica",
-      fontSize: 12,
-      lineHeight: 6
+      marginLeft: 20,
+      marginRight: 20
     };
     
     // ============================================
@@ -1890,7 +1882,6 @@
       };
       
       localStorage.setItem('relatorioVistoriaSubestacao', JSON.stringify(dados));
-      atualizarStatusSalvo();
       mostrarStatus('Formulário salvo localmente!');
       
       // Notificar dashboard se existir
@@ -1953,7 +1944,6 @@
         atualizarTextoGerado();
         atualizarContadorFotos();
         
-        atualizarStatusSalvo();
         mostrarStatus('Dados carregados com sucesso!');
       } catch (e) {
         console.error('Erro ao carregar dados:', e);
@@ -1961,9 +1951,493 @@
       }
     }
     
-    function atualizarStatusSalvo() {
-      // Esta função pode ser implementada se houver badge de status no formulário
-      console.log('Formulário salvo');
+    // ============================================
+    // FUNÇÃO GERAR PDF - IGUAL AO FORMULÁRIO 1
+    // ============================================
+    function gerarPDF() {
+      try {
+        mostrarStatus('Gerando PDF...', 'info');
+        
+        if (typeof window.jspdf === 'undefined') {
+          mostrarStatus('Erro: Biblioteca jsPDF não carregada', 'error');
+          return;
+        }
+        
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = 210;
+        const marginLeft = 20;
+        const marginRight = 20;
+        let yPos = 20;
+        
+        // Função para adicionar cabeçalho com logos
+        const adicionarCabecalho = () => {
+          try {
+            // Logo esquerda (ERCBA)
+            if (LOGOS.headerLeft) {
+              pdf.addImage(LOGOS.headerLeft, 'PNG', marginLeft, 10, 30, 23);
+            } else {
+              pdf.setFillColor(...PDF_CONFIG.colors.primary);
+              pdf.rect(marginLeft, 10, 20, 20, 'F');
+              pdf.setTextColor(255, 255, 255);
+              pdf.setFontSize(8);
+              pdf.text("ERCBA", marginLeft + 10, 22, { align: 'center' });
+            }
+            
+            // Logo direita (IAT)
+            if (LOGOS.headerRight) {
+              pdf.addImage(LOGOS.headerRight, 'PNG', pageWidth - marginRight - 20, 10, 25, 20);
+            } else {
+              pdf.setFillColor(...PDF_CONFIG.colors.secondary);
+              pdf.rect(pageWidth - marginRight - 20, 10, 20, 20, 'F');
+              pdf.setTextColor(255, 255, 255);
+              pdf.setFontSize(8);
+              pdf.text("IAT", pageWidth - marginRight - 10, 22, { align: 'center' });
+            }
+          } catch (e) {
+            console.log('Erro ao carregar logos, usando fallback:', e);
+            pdf.setFillColor(...PDF_CONFIG.colors.primary);
+            pdf.rect(marginLeft, 10, 20, 20, 'F');
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(8);
+            pdf.text("ERCBA", marginLeft + 10, 22, { align: 'center' });
+            
+            pdf.setFillColor(...PDF_CONFIG.colors.secondary);
+            pdf.rect(pageWidth - marginRight - 20, 10, 20, 20, 'F');
+            pdf.text("IAT", pageWidth - marginRight - 10, 22, { align: 'center' });
+          }
+          
+          pdf.setLineWidth(0.5);
+          pdf.line(marginLeft, 35, pageWidth - marginRight, 35);
+        };
+        
+        // Função para adicionar rodapé
+        const adicionarRodape = (paginaAtual, totalPaginas) => {
+          const hoje = new Date().toLocaleDateString('pt-BR');
+          
+          // Linha decorativa
+          if (LOGOS.footerLogo) {
+            try {
+              const lineWidth = pageWidth - marginLeft - marginRight;
+              const lineHeight = 2;
+              const lineY = 270;
+              pdf.addImage(LOGOS.footerLogo, 'PNG', marginLeft, lineY, lineWidth, lineHeight);
+            } catch (e) {
+              pdf.setLineWidth(0.5);
+              pdf.setDrawColor(...PDF_CONFIG.colors.primary);
+              pdf.line(marginLeft, 271, pageWidth - marginRight, 271);
+            }
+          } else {
+            pdf.setLineWidth(0.5);
+            pdf.setDrawColor(...PDF_CONFIG.colors.primary);
+            pdf.line(marginLeft, 271, pageWidth - marginRight, 271);
+          }
+          
+          // Texto do rodapé
+          pdf.setFontSize(7);
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(...PDF_CONFIG.colors.darkGray);
+          
+          pdf.text(PDF_CONFIG.footerText.linha1, marginLeft, 278);
+          pdf.text(PDF_CONFIG.footerText.linha2, marginLeft, 282);
+          pdf.text(PDF_CONFIG.footerText.linha3, marginLeft, 286);
+          pdf.text(`Gerado em: ${hoje}`, pageWidth / 2, 286, { align: 'center' });
+          pdf.text(`Página ${paginaAtual} de ${totalPaginas}`, pageWidth - marginRight, 286, { align: 'right' });
+        };
+        
+        // Função para verificar nova página
+        const verificarNovaPagina = (alturaNecessaria) => {
+          if (yPos + alturaNecessaria > 250) {
+            const paginaAtual = pdf.internal.getNumberOfPages();
+            adicionarRodape(paginaAtual, paginaAtual + 1);
+            pdf.addPage();
+            adicionarCabecalho();
+            yPos = 40;
+            return true;
+          }
+          return false;
+        };
+        
+        // Função para adicionar cabeçalho da tabela de condicionantes
+        const adicionarCabecalhoCondicionantes = (linhaY) => {
+          pdf.setFillColor(...PDF_CONFIG.colors.primary);
+          pdf.rect(marginLeft, linhaY, pageWidth - marginLeft - marginRight, 8, 'F');
+          pdf.setTextColor(255, 255, 255);
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(9);
+          pdf.text('CONDICIONANTES', marginLeft + 5, linhaY + 5);
+          pdf.text('ATENDE', pageWidth - marginRight - 15, linhaY + 5);
+          return linhaY + 8;
+        };
+        
+        // Função para adicionar cabeçalho da tabela de checklist
+        const adicionarCabecalhoChecklist = (linhaY) => {
+          pdf.setFillColor(...PDF_CONFIG.colors.secondary);
+          pdf.rect(marginLeft, linhaY, pageWidth - marginLeft - marginRight, 8, 'F');
+          pdf.setTextColor(255, 255, 255);
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(9);
+          pdf.text('CHECK-LIST IN-LOCO', marginLeft + 5, linhaY + 5);
+          pdf.text('ATENDE', pageWidth - marginRight - 15, linhaY + 5);
+          return linhaY + 8;
+        };
+        
+        // Começar a primeira página
+        adicionarCabecalho();
+        yPos = 40;
+        
+        // Título do relatório
+        pdf.setFontSize(16);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text(PDF_CONFIG.relatorioText.linha1, pageWidth / 2, yPos, { align: 'center' });
+        yPos += 8;
+        pdf.setFontSize(14);
+        pdf.text(PDF_CONFIG.relatorioText.linha2, pageWidth / 2, yPos, { align: 'center' });
+        yPos += 8;
+        pdf.setFontSize(12);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(PDF_CONFIG.relatorioText.linha3, pageWidth / 2, yPos, { align: 'center' });
+        yPos += 12;
+        
+        // Informações básicas
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        const interessado = document.getElementById('interessado').value || 'Não informado';
+        const protocolo = document.getElementById('protocolo').value || 'Não informado';
+        const municipio = document.getElementById('municipio').value || 'Não informado';
+        const atividade = document.getElementById('atividade').value || 'Não informado';
+        
+        pdf.text('INTERESSADO:', marginLeft, yPos);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(interessado, marginLeft + 45, yPos);
+        yPos += 7;
+        
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text('PROTOCOLO:', marginLeft, yPos);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(protocolo, marginLeft + 45, yPos);
+        yPos += 7;
+        
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text('MUNICÍPIO:', marginLeft, yPos);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(municipio, marginLeft + 45, yPos);
+        yPos += 7;
+        
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text('ATIVIDADE:', marginLeft, yPos);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(atividade, marginLeft + 45, yPos);
+        yPos += 15;
+        
+        // Seção 1: Informações da Vistoria
+        verificarNovaPagina(30);
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text('INFORMAÇÕES DA VISTORIA:', marginLeft, yPos);
+        yPos += 10;
+        
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        
+        const dia = document.getElementById('dia').value || '____';
+        const mes = document.getElementById('mes').value || '__________';
+        const ano = document.getElementById('ano').value || '______';
+        const subestacao = document.getElementById('subestacao').value || 'Não informado';
+        const empresa = document.getElementById('empresa').value || 'Não informado';
+        
+        pdf.text(`Data: ${dia} de ${mes} de ${ano}`, marginLeft, yPos);
+        yPos += 7;
+        pdf.text(`Subestação: ${subestacao}`, marginLeft, yPos);
+        yPos += 7;
+        pdf.text(`Empresa: ${empresa}`, marginLeft, yPos);
+        yPos += 15;
+        
+        // Técnicos
+        const tecnicosValidos = tecnicos.filter(t => t && t.trim() !== '');
+        if (tecnicosValidos.length > 0) {
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text('Técnicos:', marginLeft, yPos);
+          yPos += 7;
+          
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(0, 0, 0);
+          tecnicosValidos.forEach((tecnico, index) => {
+            if (yPos > 250) {
+              const paginaAtual = pdf.internal.getNumberOfPages();
+              adicionarRodape(paginaAtual, paginaAtual + 1);
+              pdf.addPage();
+              adicionarCabecalho();
+              yPos = 40;
+            }
+            pdf.text(`• ${tecnico}`, marginLeft + 5, yPos);
+            yPos += 6;
+          });
+          yPos += 5;
+        }
+        
+        // Representantes
+        const representantesValidos = representantes.filter(r => r && r.trim() !== '');
+        if (representantesValidos.length > 0) {
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text('Representantes:', marginLeft, yPos);
+          yPos += 7;
+          
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(0, 0, 0);
+          representantesValidos.forEach((rep, index) => {
+            if (yPos > 250) {
+              const paginaAtual = pdf.internal.getNumberOfPages();
+              adicionarRodape(paginaAtual, paginaAtual + 1);
+              pdf.addPage();
+              adicionarCabecalho();
+              yPos = 40;
+            }
+            pdf.text(`• ${rep}`, marginLeft + 5, yPos);
+            yPos += 6;
+          });
+          yPos += 5;
+        }
+        
+        // Descrição
+        verificarNovaPagina(30);
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text('DESCRIÇÃO DA VISTORIA:', marginLeft, yPos);
+        yPos += 8;
+        
+        const textoPreview = document.getElementById('textoPreview').innerText.replace('DESCRIÇÃO:', '').trim();
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        const descLines = pdf.splitTextToSize(textoPreview || 'Nenhuma descrição disponível.', pageWidth - 2 * marginLeft);
+        for (let i = 0; i < descLines.length; i++) {
+          if (yPos > 250) {
+            const paginaAtual = pdf.internal.getNumberOfPages();
+            adicionarRodape(paginaAtual, paginaAtual + 1);
+            pdf.addPage();
+            adicionarCabecalho();
+            yPos = 40;
+          }
+          pdf.text(descLines[i], marginLeft, yPos);
+          yPos += 5;
+        }
+        yPos += 10;
+        
+        // Constatações
+        verificarNovaPagina(30);
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text('CONSTATAÇÕES:', marginLeft, yPos);
+        yPos += 8;
+        
+        const temInconformidades = document.getElementById('inconformidades').checked;
+        const semInconformidades = document.getElementById('semInconformidades').checked;
+        const descInconformidades = document.getElementById('descricaoInconformidades').value || '';
+        const descSemInconformidades = document.getElementById('descricaoSemInconformidades').value || '';
+        
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        
+        if (temInconformidades && descInconformidades) {
+          const constLines = pdf.splitTextToSize(descInconformidades, pageWidth - 2 * marginLeft);
+          for (let i = 0; i < constLines.length; i++) {
+            if (yPos > 250) {
+              const paginaAtual = pdf.internal.getNumberOfPages();
+              adicionarRodape(paginaAtual, paginaAtual + 1);
+              pdf.addPage();
+              adicionarCabecalho();
+              yPos = 40;
+            }
+            pdf.text(constLines[i], marginLeft, yPos);
+            yPos += 5;
+          }
+        } else if (semInconformidades) {
+          const constLines = pdf.splitTextToSize(descSemInconformidades || 'Não foram identificadas inconformidades durante a vistoria.', pageWidth - 2 * marginLeft);
+          for (let i = 0; i < constLines.length; i++) {
+            if (yPos > 250) {
+              const paginaAtual = pdf.internal.getNumberOfPages();
+              adicionarRodape(paginaAtual, paginaAtual + 1);
+              pdf.addPage();
+              adicionarCabecalho();
+              yPos = 40;
+            }
+            pdf.text(constLines[i], marginLeft, yPos);
+            yPos += 5;
+          }
+        } else {
+          pdf.text('Nenhuma constatação registrada.', marginLeft, yPos);
+          yPos += 5;
+        }
+        yPos += 10;
+        
+        // Conclusão
+        verificarNovaPagina(30);
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text('CONCLUSÃO:', marginLeft, yPos);
+        yPos += 8;
+        
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('Com base na vistoria técnica realizada, conclui-se que:', marginLeft, yPos);
+        yPos += 7;
+        
+        // Conformidades
+        const conformidadesValidas = conformidades.filter(c => c && c.trim() !== '');
+        if (conformidadesValidas.length > 0) {
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text('Conformidades identificadas:', marginLeft, yPos);
+          yPos += 7;
+          
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(0, 0, 0);
+          conformidadesValidas.forEach((conformidade, index) => {
+            if (yPos > 250) {
+              const paginaAtual = pdf.internal.getNumberOfPages();
+              adicionarRodape(paginaAtual, paginaAtual + 1);
+              pdf.addPage();
+              adicionarCabecalho();
+              yPos = 40;
+            }
+            const confLines = pdf.splitTextToSize(`${index + 1}. ${conformidade}`, pageWidth - 2 * marginLeft);
+            for (let i = 0; i < confLines.length; i++) {
+              pdf.text(confLines[i], marginLeft, yPos);
+              yPos += 5;
+            }
+          });
+          yPos += 5;
+        }
+        
+        // Inconformidades
+        const inconformidadesValidas = inconformidades.filter(i => i && i.trim() !== '');
+        if (inconformidadesValidas.length > 0) {
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text('Inconformidades identificadas:', marginLeft, yPos);
+          yPos += 7;
+          
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(0, 0, 0);
+          inconformidadesValidas.forEach((inconformidade, index) => {
+            if (yPos > 250) {
+              const paginaAtual = pdf.internal.getNumberOfPages();
+              adicionarRodape(paginaAtual, paginaAtual + 1);
+              pdf.addPage();
+              adicionarCabecalho();
+              yPos = 40;
+            }
+            const incLines = pdf.splitTextToSize(`${index + 1}. ${inconformidade}`, pageWidth - 2 * marginLeft);
+            for (let i = 0; i < incLines.length; i++) {
+              pdf.text(incLines[i], marginLeft, yPos);
+              yPos += 5;
+            }
+          });
+          yPos += 5;
+        }
+        
+        // Observações adicionais
+        const observacoes = document.getElementById('observacoesAdicionais').value;
+        if (observacoes && observacoes.trim() !== '') {
+          verificarNovaPagina(20);
+          pdf.setFontSize(12);
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text('OBSERVAÇÕES ADICIONAIS:', marginLeft, yPos);
+          yPos += 8;
+          
+          pdf.setFontSize(10);
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(0, 0, 0);
+          const obsLines = pdf.splitTextToSize(observacoes, pageWidth - 2 * marginLeft);
+          for (let i = 0; i < obsLines.length; i++) {
+            if (yPos > 250) {
+              const paginaAtual = pdf.internal.getNumberOfPages();
+              adicionarRodape(paginaAtual, paginaAtual + 1);
+              pdf.addPage();
+              adicionarCabecalho();
+              yPos = 40;
+            }
+            pdf.text(obsLines[i], marginLeft, yPos);
+            yPos += 5;
+          }
+          yPos += 10;
+        }
+        
+        // Assinatura
+        verificarNovaPagina(40);
+        yPos += 10;
+        
+        const vistoriador = document.getElementById('assinaturaVistoriador').value || '________________';
+        const cargo = document.getElementById('cargoVistoriador').value || 'Engenheiro/Responsável Técnico';
+        
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('VISTORIADOR:', marginLeft, yPos);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(vistoriador, marginLeft + 45, yPos);
+        yPos += 7;
+        
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('CARGO:', marginLeft, yPos);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(cargo, marginLeft + 45, yPos);
+        yPos += 15;
+        
+        // Linha de assinatura
+        const larguraLinhaAssinatura = 80;
+        const posicaoXCentro = (pageWidth - larguraLinhaAssinatura) / 2;
+        
+        pdf.setDrawColor(...PDF_CONFIG.colors.primary);
+        pdf.setLineWidth(0.5);
+        pdf.line(posicaoXCentro, yPos, posicaoXCentro + larguraLinhaAssinatura, yPos);
+        yPos += 5;
+        pdf.setFontSize(9);
+        pdf.setTextColor(...PDF_CONFIG.colors.darkGray);
+        pdf.text('ASSINATURA', pageWidth / 2, yPos, { align: 'center' });
+        
+        // Adicionar rodapé em todas as páginas
+        const totalPaginas = pdf.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPaginas; i++) {
+          pdf.setPage(i);
+          adicionarRodape(i, totalPaginas);
+        }
+        
+        // Salvar o PDF
+        const nomeArquivo = protocolo ?
+          `Relatorio_Vistoria_${protocolo.replace(/\s+/g, '_')}.pdf` :
+          `Relatorio_Vistoria_${new Date().getTime()}.pdf`;
+        
+        pdf.save(nomeArquivo);
+        mostrarStatus('PDF gerado com sucesso!');
+        
+      } catch (error) {
+        console.error('Erro detalhado ao gerar PDF:', error);
+        mostrarStatus(`Erro ao gerar PDF: ${error.message}`, 'error');
+      }
     }
     
     function limparFormulario() {
@@ -2015,292 +2489,6 @@
         localStorage.removeItem('relatorioVistoriaSubestacao');
         
         mostrarStatus('Formulário limpo com sucesso!');
-      }
-    }
-    
-    function gerarPDF() {
-      mostrarStatus('Gerando PDF conforme normas ABNT...', 'info');
-      
-      try {
-        if (typeof window.jspdf === 'undefined') {
-          mostrarStatus('Erro: Biblioteca jsPDF não carregada', 'error');
-          return;
-        }
-        
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pageWidth = 210;
-        const marginLeft = 25;
-        const marginRight = 25;
-        const contentWidth = pageWidth - marginLeft - marginRight;
-        let yPos = 25;
-        
-        // Função para adicionar cabeçalho
-        function adicionarCabecalho() {
-          try {
-            if (LOGOS.headerLeft) {
-              pdf.addImage(LOGOS.headerLeft, 'PNG', marginLeft, 10, 25, 20);
-            }
-            if (LOGOS.headerRight) {
-              pdf.addImage(LOGOS.headerRight, 'PNG', pageWidth - marginRight - 20, 10, 20, 18);
-            }
-          } catch (e) {
-            console.log('Logos não carregadas no PDF');
-          }
-          
-          pdf.setFont(PDF_CONFIG.font, "bold");
-          pdf.setFontSize(14);
-          pdf.setTextColor(...PDF_CONFIG.colors.primary);
-          pdf.text(PDF_CONFIG.relatorioText.linha1, pageWidth / 2, 15, { align: 'center' });
-          
-          pdf.setFontSize(12);
-          pdf.text(PDF_CONFIG.relatorioText.linha2, pageWidth / 2, 22, { align: 'center' });
-          
-          pdf.setFontSize(12);
-          pdf.setFont(PDF_CONFIG.font, "normal");
-          pdf.text(PDF_CONFIG.relatorioText.linha3, pageWidth / 2, 29, { align: 'center' });
-          
-          pdf.setDrawColor(...PDF_CONFIG.colors.primary);
-          pdf.setLineWidth(0.3);
-          pdf.line(marginLeft, 34, pageWidth - marginRight, 34);
-        }
-        
-        // Função para adicionar rodapé
-        function adicionarRodape(paginaAtual, totalPaginas) {
-          const hoje = new Date().toLocaleDateString('pt-BR');
-          
-          pdf.setDrawColor(...PDF_CONFIG.colors.mediumGray);
-          pdf.setLineWidth(0.2);
-          pdf.line(marginLeft, 277, pageWidth - marginRight, 277);
-          
-          pdf.setFontSize(8);
-          pdf.setFont(PDF_CONFIG.font, "normal");
-          pdf.setTextColor(...PDF_CONFIG.colors.darkGray);
-          
-          pdf.text(PDF_CONFIG.footerText.linha1, marginLeft, 283);
-          pdf.text(PDF_CONFIG.footerText.linha2, marginLeft, 288);
-          pdf.text(PDF_CONFIG.footerText.linha3, marginLeft, 293);
-          
-          pdf.text(`Gerado em: ${hoje}`, pageWidth / 2, 293, { align: 'center' });
-          pdf.text(`Página ${paginaAtual} de ${totalPaginas}`, pageWidth - marginRight, 293, { align: 'right' });
-        }
-        
-        // Função para verificar necessidade de nova página
-        function verificarNovaPagina(alturaNecessaria) {
-          if (yPos + alturaNecessaria > 270) {
-            const paginaAtual = pdf.internal.getNumberOfPages();
-            adicionarRodape(paginaAtual, paginaAtual + 1);
-            pdf.addPage();
-            adicionarCabecalho();
-            yPos = 40;
-            return true;
-          }
-          return false;
-        }
-        
-        // Função para adicionar texto formatado
-        function adicionarTexto(texto, negrito = false) {
-          if (!texto) return;
-          
-          pdf.setFont(PDF_CONFIG.font, negrito ? "bold" : "normal");
-          pdf.setFontSize(PDF_CONFIG.fontSize);
-          pdf.setTextColor(0, 0, 0);
-          
-          const lines = pdf.splitTextToSize(texto, contentWidth);
-          
-          for (let i = 0; i < lines.length; i++) {
-            if (yPos > 270) {
-              const paginaAtual = pdf.internal.getNumberOfPages();
-              adicionarRodape(paginaAtual, paginaAtual + 1);
-              pdf.addPage();
-              adicionarCabecalho();
-              yPos = 40;
-            }
-            pdf.text(lines[i], marginLeft, yPos);
-            yPos += PDF_CONFIG.lineHeight;
-          }
-          yPos += 2;
-        }
-        
-        // Função para criar título de seção
-        function adicionarTitulo(texto) {
-          verificarNovaPagina(10);
-          pdf.setFont(PDF_CONFIG.font, "bold");
-          pdf.setFontSize(14);
-          pdf.setTextColor(...PDF_CONFIG.colors.primary);
-          pdf.text(texto, marginLeft, yPos);
-          yPos += PDF_CONFIG.lineHeight + 2;
-        }
-        
-        // Função principal assíncrona
-        const gerarPDFAssincrono = async () => {
-          adicionarCabecalho();
-          yPos = 45;
-          
-          // Título principal
-          pdf.setFont(PDF_CONFIG.font, "bold");
-          pdf.setFontSize(16);
-          pdf.setTextColor(...PDF_CONFIG.colors.primary);
-          pdf.text('RELATÓRIO DE VISTORIA TÉCNICA', pageWidth / 2, yPos, { align: 'center' });
-          yPos += PDF_CONFIG.lineHeight + 4;
-          
-          // Identificação
-          adicionarTitulo('IDENTIFICAÇÃO DO EMPREENDIMENTO');
-          
-          const interessado = document.getElementById('interessado').value || 'Não informado';
-          const assunto = document.getElementById('assunto').value || 'Não informado';
-          const municipio = document.getElementById('municipio').value || 'Não informado';
-          const coordenadas = document.getElementById('coordenadas').value || 'Não informado';
-          const atividade = document.getElementById('atividade').value || 'Não informado';
-          const protocolo = document.getElementById('protocolo').value || 'Não informado';
-          
-          adicionarTexto(`Interessado: ${interessado}`);
-          adicionarTexto(`Assunto: ${assunto}`);
-          adicionarTexto(`Município: ${municipio}`);
-          adicionarTexto(`Coordenadas: ${coordenadas}`);
-          adicionarTexto(`Atividade: ${atividade}`);
-          adicionarTexto(`Protocolo: ${protocolo}`);
-          
-          yPos += 5;
-          
-          // Descrição da vistoria
-          adicionarTitulo('DESCRIÇÃO DA VISTORIA');
-          
-          const textoPreview = document.getElementById('textoPreview').innerText.replace('DESCRIÇÃO:', '').trim();
-          adicionarTexto(textoPreview || 'Nenhuma descrição disponível.');
-          
-          yPos += 2;
-          
-          // Constatações
-          adicionarTitulo('CONSTATAÇÕES');
-          
-          const temInconformidades = document.getElementById('inconformidades').checked;
-          const semInconformidades = document.getElementById('semInconformidades').checked;
-          const descInconformidades = document.getElementById('descricaoInconformidades').value || '';
-          const descSemInconformidades = document.getElementById('descricaoSemInconformidades').value || '';
-          
-          if (temInconformidades && descInconformidades) {
-            adicionarTexto(descInconformidades);
-          } else if (semInconformidades) {
-            adicionarTexto(descSemInconformidades || 'Não foram identificadas inconformidades durante a vistoria.');
-          } else {
-            adicionarTexto('Nenhuma constatação registrada.');
-          }
-          
-          yPos += 5;
-          
-          // Conclusão
-          adicionarTitulo('CONCLUSÃO');
-          
-          pdf.setFont(PDF_CONFIG.font, "normal");
-          pdf.setFontSize(PDF_CONFIG.fontSize);
-          pdf.setTextColor(0, 0, 0);
-          pdf.text('Com base na vistoria técnica realizada, conclui-se que:', marginLeft, yPos);
-          yPos += PDF_CONFIG.lineHeight + 2;
-          
-          // Conformidades
-          const conformidadesValidas = conformidades.filter(c => c && c.trim() !== '');
-          if (conformidadesValidas.length > 0) {
-            pdf.setFont(PDF_CONFIG.font, "bold");
-            pdf.setTextColor(...PDF_CONFIG.colors.primary);
-            pdf.text('Conformidades identificadas:', marginLeft, yPos);
-            yPos += PDF_CONFIG.lineHeight;
-            
-            pdf.setFont(PDF_CONFIG.font, "normal");
-            pdf.setTextColor(0, 0, 0);
-            
-            conformidadesValidas.forEach((conformidade, index) => {
-              adicionarTexto(`${index + 1}. ${conformidade}`);
-            });
-            
-            yPos += 2;
-          }
-          
-          // Inconformidades
-          const inconformidadesValidas = inconformidades.filter(i => i && i.trim() !== '');
-          if (inconformidadesValidas.length > 0) {
-            pdf.setFont(PDF_CONFIG.font, "bold");
-            pdf.setTextColor(...PDF_CONFIG.colors.primary);
-            pdf.text('Inconformidades identificadas:', marginLeft, yPos);
-            yPos += PDF_CONFIG.lineHeight;
-            
-            pdf.setFont(PDF_CONFIG.font, "normal");
-            pdf.setTextColor(0, 0, 0);
-            
-            inconformidadesValidas.forEach((inconformidade, index) => {
-              adicionarTexto(`${index + 1}. ${inconformidade}`);
-            });
-            
-            yPos += 2;
-          }
-          
-          // Observações adicionais
-          const observacoes = document.getElementById('observacoesAdicionais').value;
-          if (observacoes && observacoes.trim() !== '') {
-            pdf.setFont(PDF_CONFIG.font, "bold");
-            pdf.setTextColor(...PDF_CONFIG.colors.primary);
-            pdf.text('Observações adicionais:', marginLeft, yPos);
-            yPos += PDF_CONFIG.lineHeight;
-            
-            pdf.setFont(PDF_CONFIG.font, "normal");
-            pdf.setTextColor(0, 0, 0);
-            adicionarTexto(observacoes);
-          }
-          
-          // Assinatura
-          verificarNovaPagina(30);
-          pdf.setFont(PDF_CONFIG.font, "bold");
-          pdf.setFontSize(14);
-          pdf.setTextColor(...PDF_CONFIG.colors.primary);
-          pdf.text('ASSINATURA', marginLeft, yPos);
-          yPos += PDF_CONFIG.lineHeight + 4;
-          
-          const vistoriador = document.getElementById('assinaturaVistoriador').value || '______________________';
-          const cargo = document.getElementById('cargoVistoriador').value || 'Engenheiro/Responsável Técnico';
-          
-          pdf.setFont(PDF_CONFIG.font, "normal");
-          pdf.setFontSize(PDF_CONFIG.fontSize);
-          pdf.setTextColor(0, 0, 0);
-          pdf.text(`Vistoriador(a): ${vistoriador}`, marginLeft, yPos);
-          yPos += PDF_CONFIG.lineHeight;
-          pdf.text(`Cargo: ${cargo}`, marginLeft, yPos);
-          yPos += PDF_CONFIG.lineHeight + 5;
-          
-          // Linha de assinatura
-          pdf.setDrawColor(...PDF_CONFIG.colors.primary);
-          pdf.setLineWidth(0.3);
-          pdf.line(marginLeft, yPos, pageWidth - marginRight, yPos);
-          yPos += 4;
-          pdf.setFont(PDF_CONFIG.font, "normal");
-          pdf.setFontSize(9);
-          pdf.setTextColor(...PDF_CONFIG.colors.darkGray);
-          pdf.text('Assinatura', pageWidth / 2, yPos, { align: 'center' });
-          
-          // Adicionar rodapé em todas as páginas
-          const totalPaginas = pdf.internal.getNumberOfPages();
-          for (let i = 1; i <= totalPaginas; i++) {
-            pdf.setPage(i);
-            adicionarRodape(i, totalPaginas);
-          }
-          
-          // Salvar PDF
-          const protocoloNum = document.getElementById('protocolo').value || 'sem_protocolo';
-          const data = new Date();
-          const timestamp = `${data.getDate()}${data.getMonth()+1}${data.getFullYear()}_${data.getHours()}${data.getMinutes()}`;
-          const nomeArquivo = `Relatorio_Vistoria_Subestacao_${protocoloNum.replace(/\s+/g, '_')}_${timestamp}.pdf`;
-          
-          pdf.save(nomeArquivo);
-          mostrarStatus('PDF gerado com formatação ABNT!');
-        };
-        
-        gerarPDFAssincrono().catch(error => {
-          console.error('Erro na geração do PDF:', error);
-          mostrarStatus(`Erro ao gerar PDF: ${error.message}`, 'error');
-        });
-        
-      } catch (error) {
-        console.error('Erro ao iniciar geração do PDF:', error);
-        mostrarStatus(`Erro ao gerar PDF: ${error.message}`, 'error');
       }
     }
     
