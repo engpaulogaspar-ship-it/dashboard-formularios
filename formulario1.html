@@ -1299,9 +1299,7 @@
     // FUNÇÕES PRINCIPAIS DO FORMULÁRIO
     // ============================================
     function salvarFormulario() {
-      
       const dados = {
-        
         empreendimento: document.getElementById('empreendimento').value,
         protocolo: document.getElementById('protocolo').value,
         dataVistoria: document.getElementById('dataVistoria').value,
@@ -1414,7 +1412,7 @@
     }
     
     // ============================================
-    // FUNÇÃO GERAR PDF - CORRIGIDA COM CONFIGURAÇÃO CORRETA DAS LINHAS
+    // FUNÇÃO GERAR PDF - CORRIGIDA COM ESPAÇAMENTO APÓS CABEÇALHO
     // ============================================
     function gerarPDF() {
       try {
@@ -1538,7 +1536,7 @@
             adicionarRodape(paginaAtual, paginaAtual);
             pdf.addPage();
             adicionarCabecalho();
-            yPos = 45;
+            yPos = 55; // AUMENTADO de 45 para 55 para dar mais espaço após o cabeçalho
             return true;
           }
           return false;
@@ -1574,7 +1572,7 @@
         
         // Adicionar cabeçalho na primeira página
         adicionarCabecalho();
-        yPos = 45;
+        yPos = 55; // AUMENTADO de 45 para 55 para dar mais espaço após o cabeçalho
         
         // Informações básicas
         pdf.setFontSize(11);
@@ -1625,7 +1623,7 @@
             adicionarRodape(paginaAtual, paginaAtual);
             pdf.addPage();
             adicionarCabecalho();
-            linhaY = 45;
+            linhaY = 55; // AUMENTADO de 45 para 55
             linhaY = adicionarCabecalhoCondicionantes(linhaY);
             pdf.setFontSize(9);
           }
@@ -1675,7 +1673,7 @@
             adicionarRodape(paginaAtual, paginaAtual);
             pdf.addPage();
             adicionarCabecalho();
-            linhaY = 45;
+            linhaY = 55; // AUMENTADO de 45 para 55
             linhaY = adicionarCabecalhoChecklist(linhaY);
             pdf.setFontSize(9);
           }
@@ -1721,7 +1719,7 @@
               adicionarRodape(paginaAtual, paginaAtual);
               pdf.addPage();
               adicionarCabecalho();
-              yPos = 45;
+              yPos = 55; // AUMENTADO de 45 para 55
             }
             pdf.text(obsLines[i], marginLeft, yPos);
             yPos += 5;
