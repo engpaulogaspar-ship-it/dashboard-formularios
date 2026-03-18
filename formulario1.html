@@ -28,6 +28,45 @@
     .dashboard-container {
       max-width: 1400px;
       margin: 0 auto;
+      position: relative;
+    }
+
+    /* Botão Voltar ao Dashboard */
+    .btn-voltar-dashboard {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-voltar-dashboard:hover {
+      transform: translateX(-5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    }
+
+    .btn-voltar-dashboard i {
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-voltar-dashboard:hover i {
+      transform: translateX(-3px);
     }
 
     /* Header Moderno com Logos nos lados */
@@ -193,6 +232,14 @@
       .report-title {
         font-size: 15px;
       }
+
+      .btn-voltar-dashboard {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin-bottom: 15px;
+        width: fit-content;
+      }
     }
 
     @media (max-width: 768px) {
@@ -211,6 +258,11 @@
       .logo-img {
         height: 55px;
         padding: 6px;
+      }
+
+      .btn-voltar-dashboard {
+        padding: 8px 16px;
+        font-size: 0.9rem;
       }
     }
 
@@ -679,6 +731,10 @@
       .btn-remove {
         display: none !important;
       }
+
+      .btn-voltar-dashboard {
+        display: none !important;
+      }
     }
 
     /* Scrollbar Personalizada */
@@ -710,6 +766,11 @@
 
 <body>
   <div class="dashboard-container">
+    <!-- Botão Voltar ao Dashboard (ADICIONADO) -->
+    <button class="btn-voltar-dashboard no-print" onclick="voltarDashboard()">
+      <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+    </button>
+
     <!-- Header Moderno com Logos nos Lados -->
     <div class="dashboard-header">
       <!-- Logo Esquerda -->
@@ -719,7 +780,8 @@
       
       <!-- Informações da Organização (Centro) -->
       <div class="org-info">
-        <h1 class="org-title">DIVISÃO DE LICENCIAMENTO ESTRATÉGICO</h1>
+        <h1 class="org-title">ESCRITÓRIO REGIONAL DE CURITIBA</h1>
+        <h2 class="org-department">SETOR DE LICENCIAMENTO DE ENERGIA</h2>
         <div class="report-title">RELATÓRIO DE VISTORIA TÉCNICA</div>
       </div>
       
@@ -931,11 +993,21 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ============================================
+    // FUNÇÃO PARA VOLTAR AO DASHBOARD (ADICIONADA)
+    // ============================================
+    function voltarDashboard() {
+      if (confirm('Deseja voltar ao dashboard? Os dados não salvos serão perdidos.')) {
+        window.location.href = 'index.html';
+      }
+    }
+
+    // ============================================
     // CONFIGURAÇÕES FIXAS DO PDF
     // ============================================
     const PDF_CONFIG = {
       relatorioText: {
-        linha1: "DIVISÃO DE LICENCIAMENTO ESTRATÉGICO",
+        linha1: "ESCRITÓRIO REGIONAL DE CURITIBA",
+        linha2: "SETOR DE LICENCIAMENTO DE ENERGIA",
         linha3: "RELATÓRIO DE VISTORIA TÉCNICA"
       },
       footerText: {
@@ -1341,6 +1413,13 @@
       localStorage.setItem('relatorioVistoria', JSON.stringify(dados));
       atualizarStatusSalvo();
       mostrarStatus('Formulário salvo localmente!');
+      
+      // Notificar dashboard se existir
+      if (window.opener && !window.opener.closed) {
+        try {
+          window.opener.notificarSalvamento(1);
+        } catch (e) {}
+      }
     }
     
     function carregarFormulario() {
@@ -1403,7 +1482,7 @@
     }
     
     // ============================================
-    // FUNÇÃO GERAR PDF - ATUALIZADA PARA ITENS DINÂMICOS
+    // FUNÇÃO GERAR PDF
     // ============================================
     function gerarPDF() {
       try {
@@ -1715,10 +1794,6 @@
         const vistoriador = document.getElementById('vistoriador').value || '________________';
         const cargo = document.getElementById('cargo').value || 'Engenheiro/Responsável Técnico';
         
-        // Calcular centro da página para a linha de assinatura
-        const larguraLinhaAssinatura = 80; // 80mm de largura para a linha
-        const posicaoXCentro = (pageWidth - larguraLinhaAssinatura) / 2;
-        
         // Nome e cargo do vistoriador
         pdf.setFontSize(11);
         pdf.setFont("helvetica", "bold");
@@ -1736,6 +1811,18 @@
         pdf.setTextColor(0, 0, 0);
         pdf.text(cargo, marginLeft + 45, yPos);
         yPos += 15;
+        
+        // Linha de assinatura
+        const larguraLinhaAssinatura = 80;
+        const posicaoXCentro = (pageWidth - larguraLinhaAssinatura) / 2;
+        
+        pdf.setDrawColor(...PDF_CONFIG.colors.primary);
+        pdf.setLineWidth(0.5);
+        pdf.line(posicaoXCentro, yPos, posicaoXCentro + larguraLinhaAssinatura, yPos);
+        yPos += 5;
+        pdf.setFontSize(9);
+        pdf.setTextColor(...PDF_CONFIG.colors.darkGray);
+        pdf.text('ASSINATURA', pageWidth / 2, yPos, { align: 'center' });
         
         // Adicionar rodapé em todas as páginas
         const totalPaginas = pdf.internal.getNumberOfPages();
