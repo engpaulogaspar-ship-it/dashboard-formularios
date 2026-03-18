@@ -30,7 +30,6 @@
       margin: 0 auto;
     }
 
-    /* Header Moderno com Logos nos lados */
     .dashboard-header {
       background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
       color: white;
@@ -58,15 +57,7 @@
       z-index: 1;
     }
 
-    /* Logo Esquerda */
-    .logo-left {
-      position: relative;
-      z-index: 2;
-      flex: 0 0 auto;
-    }
-
-    /* Logo Direita */
-    .logo-right {
+    .logo-left, .logo-right {
       position: relative;
       z-index: 2;
       flex: 0 0 auto;
@@ -87,7 +78,6 @@
       transform: scale(1.05);
     }
 
-    /* Informações da Organização (Centro) */
     .org-info {
       position: relative;
       z-index: 2;
@@ -124,7 +114,6 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* Layout em Grid */
     .dashboard-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -214,7 +203,6 @@
       }
     }
 
-    /* Cards Modernos */
     .dashboard-card {
       background: white;
       border-radius: var(--border-radius);
@@ -260,7 +248,6 @@
       font-weight: 400;
     }
 
-    /* Formulário */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -297,7 +284,6 @@
       outline: none;
     }
 
-    /* Tabelas */
     .table-container {
       background: white;
       border-radius: 10px;
@@ -344,7 +330,6 @@
       line-height: 1.5;
     }
 
-    /* Radio Buttons Modernos */
     .radio-group {
       display: flex;
       gap: 25px;
@@ -372,7 +357,6 @@
       color: #495057;
     }
 
-    /* Textarea */
     .observacoes-container {
       background: #f8f9fa;
       padding: 20px;
@@ -397,7 +381,6 @@
       outline: none;
     }
 
-    /* Assinatura */
     .assinatura-container {
       background: white;
       padding: 30px;
@@ -439,7 +422,6 @@
       font-size: 14px;
     }
 
-    /* Botões Modernos */
     .btn-group-custom {
       display: flex;
       gap: 15px;
@@ -513,7 +495,6 @@
       box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
     }
 
-    /* Botões de Adicionar */
     .btn-add {
       background: linear-gradient(135deg, #6610f2, #6f42c1);
       color: white;
@@ -557,7 +538,6 @@
       transform: translateY(-2px);
     }
 
-    /* Botão de adicionar no final da tabela */
     .table-footer {
       background: #f8f9fa;
       padding: 15px;
@@ -566,7 +546,6 @@
       margin-top: -1px;
     }
 
-    /* Status Bar */
     .status-bar {
       position: fixed;
       bottom: 25px;
@@ -593,7 +572,6 @@
       }
     }
 
-    /* Footer */
     .dashboard-footer {
       text-align: center;
       margin-top: 30px;
@@ -607,7 +585,6 @@
       margin-bottom: 5px;
     }
 
-    /* Badges de Status */
     .status-badge {
       display: inline-flex;
       align-items: center;
@@ -631,7 +608,6 @@
       border: 1px solid rgba(255, 193, 7, 0.2);
     }
 
-    /* Responsividade */
     @media (max-width: 768px) {
       .btn-custom {
         min-width: 140px;
@@ -681,7 +657,6 @@
       }
     }
 
-    /* Scrollbar Personalizada */
     ::-webkit-scrollbar {
       width: 8px;
       height: 8px;
@@ -701,37 +676,42 @@
       background: var(--secondary-color);
     }
 
-    /* Ícones de Status */
     .status-icon {
       font-size: 12px;
+    }
+
+    .invalid-field {
+      border-color: #dc3545 !important;
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
     }
   </style>
 </head>
 
 <body>
   <div class="dashboard-container">
-    <!-- Header Moderno com Logos nos Lados -->
     <div class="dashboard-header">
-      <!-- Logo Esquerda -->
       <div class="logo-left">
         <img src="https://upload.wikimedia.org/wikipedia/pt/b/ba/Logo_IAT_PR.png" alt="Logo ERCBA" class="logo-img" id="logoLeft">
       </div>
       
-      <!-- Informações da Organização (Centro) -->
       <div class="org-info">
         <h1 class="org-title">DIVISÃO DE LICENCIAMENTO ESTRATÉGICO</h1>
+        <h2 class="org-department">INSTITUTO ÁGUA E TERRA - IAT</h2>
         <div class="report-title">RELATÓRIO DE VISTORIA TÉCNICA</div>
       </div>
       
-      <!-- Logo Direita -->
       <div class="logo-right">
         <img src="https://image2url.com/r2/default/images/1770223607016-99c57976-38bc-462d-aaac-01c87703b919.png" alt="Logo IAT" class="logo-img" id="logoRight">
       </div>
     </div>
 
-    <!-- Grid Principal -->
     <div class="dashboard-grid">
-      <!-- Card de Informações Básicas -->
       <div class="dashboard-card">
         <div class="card-header">
           <h3 class="card-title">
@@ -771,7 +751,6 @@
         </form>
       </div>
 
-      <!-- Card de Vistoriador -->
       <div class="dashboard-card">
         <div class="card-header">
           <h3 class="card-title">
@@ -800,7 +779,6 @@
       </div>
     </div>
 
-    <!-- Card de Condicionantes -->
     <div class="dashboard-card" style="margin-bottom: 25px;">
       <div class="card-header">
         <h3 class="card-title">
@@ -822,7 +800,6 @@
         </table>
       </div>
       
-      <!-- Botão para adicionar nova condicionante NO FINAL -->
       <div class="table-footer no-print">
         <button type="button" class="btn-add" onclick="adicionarCondicionante()">
           <i class="fas fa-plus-circle"></i> Adicionar Nova Condicionante
@@ -830,7 +807,6 @@
       </div>
     </div>
 
-    <!-- Card de Checklist -->
     <div class="dashboard-card" style="margin-bottom: 25px;">
       <div class="card-header">
         <h3 class="card-title">
@@ -852,7 +828,6 @@
         </table>
       </div>
       
-      <!-- Botão para adicionar novo item de checklist NO FINAL -->
       <div class="table-footer no-print">
         <button type="button" class="btn-add" onclick="adicionarChecklistItem()">
           <i class="fas fa-plus-circle"></i> Adicionar Novo Item ao Checklist
@@ -860,7 +835,6 @@
       </div>
     </div>
 
-    <!-- Card de Observações -->
     <div class="dashboard-card">
       <div class="card-header">
         <h3 class="card-title">
@@ -875,7 +849,6 @@
       </div>
     </div>
 
-    <!-- Card de Assinatura -->
     <div class="assinatura-container">
       <div class="assinatura-grid">
         <div class="form-group">
@@ -900,13 +873,11 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="dashboard-footer">
       <p>Este relatório deve ser preenchido com base na vistoria técnica realizada no local.</p>
       <p><i class="fas fa-shield-alt"></i> Documento oficial - ERCBA/IAT</p>
     </div>
 
-    <!-- Botões de Ação -->
     <div class="btn-group-custom no-print">
       <button type="button" class="btn-custom btn-save" onclick="salvarFormulario()">
         <i class="fas fa-save"></i> Salvar
@@ -931,7 +902,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ============================================
-    // CONFIGURAÇÕES FIXAS DO PDF
+    // CONFIGURAÇÕES FIXAS
     // ============================================
     const PDF_CONFIG = {
       relatorioText: {
@@ -948,7 +919,7 @@
         primary: [0, 51, 102],
         secondary: [0, 86, 179],
         lightGray: [240, 240, 240],
-        darkGray: [100, 100, 100],
+        darkGray: [80, 80, 80],
         mediumGray: [200, 200, 200]
       },
       pageWidth: 210,
@@ -959,9 +930,6 @@
       lineHeight: 6
     };
     
-    // ============================================
-    // LOGOS FIXAS
-    // ============================================
     const LOGOS = {
       headerLeft: "https://upload.wikimedia.org/wikipedia/pt/b/ba/Logo_IAT_PR.png",
       headerRight: "https://image2url.com/r2/default/images/1770223607016-99c57976-38bc-462d-aaac-01c87703b919.png",
@@ -969,7 +937,7 @@
     };
     
     // ============================================
-    // DADOS INICIAIS DO FORMULÁRIO
+    // DADOS INICIAIS
     // ============================================
     const condicionantesIniciais = [
       "O esgoto sanitário deverá ser encaminhado para a fossa séptica e semidouro ou para rede coletora pública.",
@@ -998,9 +966,10 @@
       "Necessidade de manutenção da vegetação"
     ];
     
-    // Arrays para armazenar itens dinâmicos
     let condicionantes = [...condicionantesIniciais];
     let checklistItems = [...checklistIniciais];
+    let temAlteracao = false;
+    let pdfTotalPaginas = 1;
     
     // ============================================
     // INICIALIZAÇÃO
@@ -1017,136 +986,49 @@
       
       vistoriador1.addEventListener('input', function() {
         vistoriador2.value = this.value;
+        temAlteracao = true;
         atualizarStatusSalvamento();
       });
       
       vistoriador2.addEventListener('input', function() {
         vistoriador1.value = this.value;
+        temAlteracao = true;
         atualizarStatusSalvamento();
       });
       
       cargo1.addEventListener('input', function() {
         cargo2.value = this.value;
+        temAlteracao = true;
         atualizarStatusSalvamento();
       });
       
       cargo2.addEventListener('input', function() {
         cargo1.value = this.value;
+        temAlteracao = true;
         atualizarStatusSalvamento();
       });
       
       preencherCondicionantes();
       preencherChecklist();
       
-      // Adicionar listeners para atualizar status
-      document.querySelectorAll('input, textarea').forEach(element => {
-        element.addEventListener('input', atualizarStatusSalvamento);
+      document.querySelectorAll('input, textarea, select').forEach(element => {
+        element.addEventListener('input', () => {
+          temAlteracao = true;
+          atualizarStatusSalvamento();
+        });
+        element.addEventListener('change', () => {
+          temAlteracao = true;
+          atualizarStatusSalvamento();
+        });
       });
       
-      // Carregar dados salvos após um breve delay
       setTimeout(() => {
         carregarFormulario();
       }, 500);
     });
     
     // ============================================
-    // FUNÇÕES PARA ADICIONAR ITENS DINÂMICOS
-    // ============================================
-    
-    function adicionarCondicionante() {
-      // Adicionar uma nova condicionante em branco
-      condicionantes.push("");
-      preencherCondicionantes();
-      atualizarStatusSalvamento();
-      mostrarStatus('Nova condicionante adicionada!');
-      
-      // Rolagem suave para o novo item
-      const tabela = document.getElementById('condicionantes-body');
-      const ultimaLinha = tabela.lastElementChild;
-      if (ultimaLinha) {
-        ultimaLinha.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        
-        // Focar no campo de texto da nova condicionante
-        const index = condicionantes.length - 1;
-        const input = document.getElementById(`cond_custom_${index}`);
-        if (input) {
-          setTimeout(() => {
-            input.focus();
-          }, 300);
-        }
-      }
-      
-      // Rolagem suave para o botão de adicionar
-      setTimeout(() => {
-        const tableFooter = document.querySelector('.dashboard-card:nth-child(3) .table-footer');
-        if (tableFooter) {
-          tableFooter.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }
-      }, 100);
-    }
-    
-    function adicionarChecklistItem() {
-      // Adicionar um novo item de checklist em branco
-      checklistItems.push("");
-      preencherChecklist();
-      atualizarStatusSalvamento();
-      mostrarStatus('Novo item de checklist adicionado!');
-      
-      // Rolagem suave para o novo item
-      const tabela = document.getElementById('checklist-body');
-      const ultimaLinha = tabela.lastElementChild;
-      if (ultimaLinha) {
-        ultimaLinha.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        
-        // Focar no campo de texto do novo item
-        const index = checklistItems.length - 1;
-        const input = document.getElementById(`check_custom_${index}`);
-        if (input) {
-          setTimeout(() => {
-            input.focus();
-          }, 300);
-        }
-      }
-      
-      // Rolagem suave para o botão de adicionar
-      setTimeout(() => {
-        const tableFooter = document.querySelector('.dashboard-card:nth-child(4) .table-footer');
-        if (tableFooter) {
-          tableFooter.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }
-      }, 100);
-    }
-    
-    function removerCondicionante(index) {
-      if (condicionantes.length <= 2) {
-        mostrarStatus('Não é possível remover as condicionantes padrão.', 'info');
-        return;
-      }
-      
-      if (confirm('Tem certeza que deseja remover esta condicionante?')) {
-        condicionantes.splice(index, 1);
-        preencherCondicionantes();
-        atualizarStatusSalvamento();
-        mostrarStatus('Condicionante removida!');
-      }
-    }
-    
-    function removerChecklistItem(index) {
-      if (checklistItems.length <= 19) {
-        mostrarStatus('Não é possível remover os itens padrão do checklist.', 'info');
-        return;
-      }
-      
-      if (confirm('Tem certeza que deseja remover este item do checklist?')) {
-        checklistItems.splice(index, 1);
-        preencherChecklist();
-        atualizarStatusSalvamento();
-        mostrarStatus('Item removido do checklist!');
-      }
-    }
-    
-    // ============================================
-    // FUNÇÕES DE PREENCHIMENTO DAS TABELAS
+    // FUNÇÕES DE PREENCHIMENTO
     // ============================================
     
     function preencherCondicionantes() {
@@ -1198,19 +1080,21 @@
         
         condicionantesBody.appendChild(row);
         
-        // Adicionar listener para o input de condicionante personalizada
         const input = document.getElementById(`cond_custom_${index}`);
         if (input) {
           input.addEventListener('input', function() {
             condicionantes[index] = this.value;
+            temAlteracao = true;
             atualizarStatusSalvamento();
           });
         }
       });
       
-      // Adicionar listeners para os radios
       document.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', atualizarStatusSalvamento);
+        radio.addEventListener('change', () => {
+          temAlteracao = true;
+          atualizarStatusSalvamento();
+        });
       });
     }
     
@@ -1263,21 +1147,101 @@
         
         checklistBody.appendChild(row);
         
-        // Adicionar listener para o input de checklist personalizado
         const input = document.getElementById(`check_custom_${index}`);
         if (input) {
           input.addEventListener('input', function() {
             checklistItems[index] = this.value;
+            temAlteracao = true;
             atualizarStatusSalvamento();
           });
         }
       });
       
-      // Adicionar listeners para os radios
       document.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', atualizarStatusSalvamento);
+        radio.addEventListener('change', () => {
+          temAlteracao = true;
+          atualizarStatusSalvamento();
+        });
       });
     }
+    
+    function adicionarCondicionante() {
+      condicionantes.push("");
+      preencherCondicionantes();
+      temAlteracao = true;
+      atualizarStatusSalvamento();
+      mostrarStatus('Nova condicionante adicionada!');
+      
+      const tabela = document.getElementById('condicionantes-body');
+      const ultimaLinha = tabela.lastElementChild;
+      if (ultimaLinha) {
+        ultimaLinha.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        const index = condicionantes.length - 1;
+        const input = document.getElementById(`cond_custom_${index}`);
+        if (input) {
+          setTimeout(() => {
+            input.focus();
+          }, 300);
+        }
+      }
+    }
+    
+    function adicionarChecklistItem() {
+      checklistItems.push("");
+      preencherChecklist();
+      temAlteracao = true;
+      atualizarStatusSalvamento();
+      mostrarStatus('Novo item de checklist adicionado!');
+      
+      const tabela = document.getElementById('checklist-body');
+      const ultimaLinha = tabela.lastElementChild;
+      if (ultimaLinha) {
+        ultimaLinha.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        const index = checklistItems.length - 1;
+        const input = document.getElementById(`check_custom_${index}`);
+        if (input) {
+          setTimeout(() => {
+            input.focus();
+          }, 300);
+        }
+      }
+    }
+    
+    function removerCondicionante(index) {
+      if (condicionantes.length <= 2) {
+        mostrarStatus('Não é possível remover as condicionantes padrão.', 'info');
+        return;
+      }
+      
+      if (confirm('Tem certeza que deseja remover esta condicionante?')) {
+        condicionantes.splice(index, 1);
+        preencherCondicionantes();
+        temAlteracao = true;
+        atualizarStatusSalvamento();
+        mostrarStatus('Condicionante removida!');
+      }
+    }
+    
+    function removerChecklistItem(index) {
+      if (checklistItems.length <= 19) {
+        mostrarStatus('Não é possível remover os itens padrão do checklist.', 'info');
+        return;
+      }
+      
+      if (confirm('Tem certeza que deseja remover este item do checklist?')) {
+        checklistItems.splice(index, 1);
+        preencherChecklist();
+        temAlteracao = true;
+        atualizarStatusSalvamento();
+        mostrarStatus('Item removido do checklist!');
+      }
+    }
+    
+    // ============================================
+    // FUNÇÕES DE STATUS E VALIDAÇÃO
+    // ============================================
     
     function atualizarStatusSalvamento() {
       const statusBadge = document.getElementById('saveStatus');
@@ -1293,11 +1257,37 @@
         statusBadge.className = 'status-badge saved';
         statusBadge.innerHTML = '<i class="fas fa-check-circle status-icon"></i> SALVO';
       }
+      temAlteracao = false;
+    }
+    
+    function validarFormulario() {
+      const campos = [
+        { id: 'empreendimento', nome: 'Empreendimento' },
+        { id: 'protocolo', nome: 'Protocolo' },
+        { id: 'vistoriador', nome: 'Vistoriador' }
+      ];
+      
+      let valido = true;
+      
+      campos.forEach(campo => {
+        const element = document.getElementById(campo.id);
+        if (!element.value || element.value.trim() === '') {
+          element.classList.add('invalid-field');
+          valido = false;
+          setTimeout(() => {
+            element.classList.remove('invalid-field');
+          }, 1000);
+          mostrarStatus(`Campo ${campo.nome} é obrigatório!`, 'error');
+        }
+      });
+      
+      return valido;
     }
     
     // ============================================
-    // FUNÇÕES PRINCIPAIS DO FORMULÁRIO
+    // FUNÇÕES DO FORMULÁRIO
     // ============================================
+    
     function salvarFormulario() {
       const dados = {
         empreendimento: document.getElementById('empreendimento').value,
@@ -1306,13 +1296,12 @@
         observacoes: document.getElementById('observacoes').value,
         vistoriador: document.getElementById('vistoriador').value,
         cargo: document.getElementById('cargo').value,
-        condicionantes: [],
-        checklist: [],
         condicionantesArray: condicionantes,
-        checklistArray: checklistItems
+        checklistArray: checklistItems,
+        condicionantes: [],
+        checklist: []
       };
       
-      // Salvar valores atuais dos inputs personalizados
       for (let i = 0; i < condicionantes.length; i++) {
         const input = document.getElementById(`cond_custom_${i}`);
         if (input) {
@@ -1330,7 +1319,6 @@
       dados.condicionantesArray = condicionantes;
       dados.checklistArray = checklistItems;
       
-      // Salvar também as respostas dos radios
       for (let i = 0; i < condicionantes.length; i++) {
         const radioValue = document.querySelector(`input[name="cond_${i}"]:checked`)?.value;
         dados.condicionantes.push({
@@ -1371,7 +1359,6 @@
         document.getElementById('cargo').value = dados.cargo || 'Engenheiro/Responsável Técnico';
         document.getElementById('cargo2').value = dados.cargo || 'Engenheiro/Responsável Técnico';
         
-        // Carregar arrays dinâmicos se existirem
         if (dados.condicionantesArray) {
           condicionantes = dados.condicionantesArray;
         }
@@ -1380,11 +1367,9 @@
           checklistItems = dados.checklistArray;
         }
         
-        // Reconstruir as tabelas
         preencherCondicionantes();
         preencherChecklist();
         
-        // Carregar respostas dos radios
         if (dados.condicionantes) {
           dados.condicionantes.forEach((cond, index) => {
             if (cond.atende) {
@@ -1411,377 +1396,6 @@
       }
     }
     
-    // ============================================
-    // FUNÇÃO GERAR PDF - CORRIGIDA COM CABEÇALHO IGUAL AO FORMULÁRIO 1
-    // ============================================
-    function gerarPDF() {
-      try {
-        mostrarStatus('Gerando PDF...', 'info');
-        
-        if (typeof window.jspdf === 'undefined') {
-          mostrarStatus('Erro: Biblioteca jsPDF não carregada', 'error');
-          return;
-        }
-        
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-          orientation: 'p',
-          unit: 'mm',
-          format: 'a4'
-        });
-        
-        const pageWidth = 210;
-        const marginLeft = 25; // Aumentado para 25mm como no Formulário 1
-        const marginRight = 25; // Aumentado para 25mm como no Formulário 1
-        let yPos = 25; // Começa em 25mm como no Formulário 1
-        
-        // ============================================
-        // FUNÇÃO PARA ADICIONAR CABEÇALHO IGUAL AO FORMULÁRIO 1
-        // ============================================
-        const adicionarCabecalho = () => {
-          try {
-            // Logo esquerda (ERCBA/IAT) - mesma posição do Formulário 1
-            if (LOGOS.headerLeft) {
-              pdf.addImage(LOGOS.headerLeft, 'PNG', marginLeft, 10, 25, 20);
-            }
-            
-            // Logo direita (IAT) - mesma posição do Formulário 1
-            if (LOGOS.headerRight) {
-              pdf.addImage(LOGOS.headerRight, 'PNG', pageWidth - marginRight - 20, 10, 20, 18);
-            }
-            
-            // Primeira linha do cabeçalho - DIVISÃO DE LICENCIAMENTO ESTRATÉGICO
-            pdf.setFont(PDF_CONFIG.font || "helvetica", "bold");
-            pdf.setFontSize(14);
-            pdf.setTextColor(...PDF_CONFIG.colors.primary);
-            pdf.text(PDF_CONFIG.relatorioText.linha2, pageWidth / 2, 15, { align: 'center' });
-            
-            // Segunda linha - INSTITUTO ÁGUA E TERRA - IAT
-            pdf.setFont(PDF_CONFIG.font || "helvetica", "bold");
-            pdf.setFontSize(14);
-            pdf.setTextColor(...PDF_CONFIG.colors.primary);
-            pdf.text(PDF_CONFIG.relatorioText.linha1, pageWidth / 2, 15, { align: 'center' });
-                       
-            // Terceira linha - RELATÓRIO DE VISTORIA TÉCNICA
-            pdf.setFontSize(12);
-            pdf.setFont(PDF_CONFIG.font || "helvetica", "normal");
-            pdf.text(PDF_CONFIG.relatorioText.linha3, pageWidth / 2, 29, { align: 'center' });
-            
-            // Linha decorativa abaixo do cabeçalho
-            pdf.setDrawColor(...PDF_CONFIG.colors.primary);
-            pdf.setLineWidth(0.3);
-            pdf.line(marginLeft, 34, pageWidth - marginRight, 34);
-            
-          } catch (e) {
-            console.log('Erro ao carregar logos, usando fallback:', e);
-            
-            // Fallback caso as logos não carreguem
-            pdf.setFillColor(...PDF_CONFIG.colors.primary);
-            pdf.rect(marginLeft, 10, 20, 20, 'F');
-            pdf.setTextColor(255, 255, 255);
-            pdf.setFontSize(8);
-            pdf.text("IAT", marginLeft + 10, 22, { align: 'center' });
-            
-            pdf.setFillColor(...PDF_CONFIG.colors.secondary);
-            pdf.rect(pageWidth - marginRight - 20, 10, 20, 20, 'F');
-            pdf.text("ERCBA", pageWidth - marginRight - 10, 22, { align: 'center' });
-            
-            // Texto do cabeçalho mesmo sem logos
-            pdf.setFont(PDF_CONFIG.font || "helvetica", "bold");
-            pdf.setFontSize(14);
-            pdf.setTextColor(...PDF_CONFIG.colors.primary);
-            pdf.text(PDF_CONFIG.relatorioText.linha1, pageWidth / 2, 15, { align: 'center' });
-            
-            pdf.setFontSize(12);
-            pdf.setFont(PDF_CONFIG.font || "helvetica", "normal");
-            pdf.text(PDF_CONFIG.relatorioText.linha3, pageWidth / 2, 29, { align: 'center' });
-            
-            pdf.setDrawColor(...PDF_CONFIG.colors.primary);
-            pdf.setLineWidth(0.3);
-            pdf.line(marginLeft, 34, pageWidth - marginRight, 34);
-          }
-        };
-        
-        // Função para adicionar rodapé (igual ao Formulário 1)
-        const adicionarRodape = (paginaAtual, totalPaginas) => {
-          const hoje = new Date().toLocaleDateString('pt-BR');
-          
-          // Linha decorativa
-          pdf.setDrawColor(...PDF_CONFIG.colors.mediumGray || [200, 200, 200]);
-          pdf.setLineWidth(0.2);
-          pdf.line(marginLeft, 277, pageWidth - marginRight, 277);
-          
-          // Texto do rodapé com 3 linhas como no Formulário 1
-          pdf.setFontSize(8);
-          pdf.setFont(PDF_CONFIG.font || "helvetica", "normal");
-          pdf.setTextColor(...PDF_CONFIG.colors.darkGray || [80, 80, 80]);
-          
-          pdf.text(PDF_CONFIG.footerText.linha1, marginLeft, 283);
-          pdf.text(PDF_CONFIG.footerText.linha2, marginLeft, 288);
-          pdf.text(PDF_CONFIG.footerText.linha3, marginLeft, 293);
-          
-          pdf.text(`Gerado em: ${hoje}`, pageWidth / 2, 293, { align: 'center' });
-          pdf.text(`Página ${paginaAtual} de ${totalPaginas}`, pageWidth - marginRight, 293, { align: 'right' });
-        };
-        
-        // Função para verificar nova página
-        const verificarNovaPagina = (alturaNecessaria) => {
-          if (yPos + alturaNecessaria > 270) {
-            const paginaAtual = pdf.internal.getNumberOfPages();
-            adicionarRodape(paginaAtual, paginaAtual);
-            pdf.addPage();
-            adicionarCabecalho();
-            yPos = 40;
-            return true;
-          }
-          return false;
-        };
-        
-        // Função para adicionar cabeçalho da tabela de condicionantes
-        const adicionarCabecalhoCondicionantes = (linhaY) => {
-          pdf.setFillColor(...PDF_CONFIG.colors.primary);
-          pdf.rect(marginLeft, linhaY, pageWidth - marginLeft - marginRight, 8, 'F');
-          pdf.setTextColor(255, 255, 255);
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(9);
-          pdf.text('CONDICIONANTES', marginLeft + 5, linhaY + 5);
-          pdf.text('ATENDE', pageWidth - marginRight - 15, linhaY + 5, { align: 'center' });
-          return linhaY + 8;
-        };
-        
-        // Função para adicionar cabeçalho da tabela de checklist
-        const adicionarCabecalhoChecklist = (linhaY) => {
-          pdf.setFillColor(...PDF_CONFIG.colors.secondary);
-          pdf.rect(marginLeft, linhaY, pageWidth - marginLeft - marginRight, 8, 'F');
-          pdf.setTextColor(255, 255, 255);
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(9);
-          pdf.text('CHECK-LIST IN-LOCO', marginLeft + 5, linhaY + 5);
-          pdf.text('ATENDE', pageWidth - marginRight - 15, linhaY + 5, { align: 'center' });
-          return linhaY + 8;
-        };
-        
-        // ============================================
-        // INÍCIO DA GERAÇÃO DO PDF
-        // ============================================
-        
-        // Adicionar cabeçalho na primeira página
-        adicionarCabecalho();
-        yPos = 40;
-        
-        // Título principal (opcional, já tem no cabeçalho)
-        pdf.setFont(PDF_CONFIG.font || "helvetica", "bold");
-        pdf.setFontSize(16);
-        pdf.setTextColor(...PDF_CONFIG.colors.primary);
-        pdf.text('RELATÓRIO DE VISTORIA TÉCNICA', pageWidth / 2, yPos, { align: 'center' });
-        yPos += 12;
-        
-        // Informações básicas
-        pdf.setFontSize(11);
-        pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(...PDF_CONFIG.colors.primary);
-        const empreendimento = document.getElementById('empreendimento').value || 'Não informado';
-        const protocolo = document.getElementById('protocolo').value || 'Não informado';
-        const dataVistoria = document.getElementById('dataVistoria').value || 'Não informada';
-        
-        pdf.text('EMPREENDIMENTO:', marginLeft, yPos);
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(0, 0, 0);
-        pdf.text(empreendimento, marginLeft + 45, yPos);
-        yPos += 7;
-        
-        pdf.text('PROTOCOLO:', marginLeft, yPos);
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(0, 0, 0);
-        pdf.text(protocolo, marginLeft + 45, yPos);
-        yPos += 7;
-        
-        pdf.text('DATA:', marginLeft, yPos);
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(0, 0, 0);
-        pdf.text(dataVistoria, marginLeft + 45, yPos);
-        yPos += 15;
-        
-        // Seção 1: Condicionantes
-        verificarNovaPagina(30);
-        pdf.setFontSize(12);
-        pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(...PDF_CONFIG.colors.primary);
-        pdf.text('1. ATENDIMENTO ÀS CONDICIONANTES:', marginLeft, yPos);
-        yPos += 10;
-        
-        // Tabela de condicionantes
-        let linhaY = yPos;
-        linhaY = adicionarCabecalhoCondicionantes(linhaY);
-        
-        // Dados das condicionantes (incluindo as dinâmicas)
-        pdf.setFontSize(9);
-        for (let i = 0; i < condicionantes.length; i++) {
-          let textoCond = condicionantes[i];
-          if (!textoCond || !textoCond.trim()) continue;
-          
-          if (linhaY > 250) {
-            const paginaAtual = pdf.internal.getNumberOfPages();
-            adicionarRodape(paginaAtual, paginaAtual);
-            pdf.addPage();
-            adicionarCabecalho();
-            linhaY = 40;
-            linhaY = adicionarCabecalhoCondicionantes(linhaY);
-            pdf.setFontSize(9);
-          }
-          
-          const radioValue = document.querySelector(`input[name="cond_${i}"]:checked`)?.value;
-          const atendeText = radioValue ? radioValue.toUpperCase() : 'NÃO';
-          
-          if (i % 2 === 0) {
-            pdf.setFillColor(...PDF_CONFIG.colors.lightGray || [245, 245, 245]);
-            pdf.rect(marginLeft, linhaY, pageWidth - marginLeft - marginRight, 8, 'F');
-          }
-          
-          pdf.setTextColor(0, 0, 0);
-          pdf.setFont('helvetica', 'normal');
-          const lines = pdf.splitTextToSize(textoCond, 110);
-          for (let j = 0; j < lines.length; j++) {
-            pdf.text(lines[j], marginLeft + 5, linhaY + (j * 4) + 5);
-          }
-          
-          pdf.setFont('helvetica', 'bold');
-          pdf.text(atendeText, pageWidth - marginRight - 15, linhaY + 5, { align: 'center' });
-          linhaY += Math.max(8, lines.length * 4 + 2);
-        }
-        
-        yPos = linhaY + 10;
-        
-        // Seção 2: Checklist
-        verificarNovaPagina(30);
-        pdf.setFontSize(12);
-        pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(...PDF_CONFIG.colors.primary);
-        pdf.text('2. RELATÓRIO DE CONFORMIDADE:', marginLeft, yPos);
-        yPos += 10;
-        
-        // Tabela de checklist
-        linhaY = yPos;
-        linhaY = adicionarCabecalhoChecklist(linhaY);
-        
-        // Dados do checklist (incluindo os dinâmicos)
-        pdf.setFontSize(9);
-        for (let i = 0; i < checklistItems.length; i++) {
-          const item = checklistItems[i];
-          if (!item || !item.trim()) continue;
-          
-          if (linhaY > 250) {
-            const paginaAtual = pdf.internal.getNumberOfPages();
-            adicionarRodape(paginaAtual, paginaAtual);
-            pdf.addPage();
-            adicionarCabecalho();
-            linhaY = 40;
-            linhaY = adicionarCabecalhoChecklist(linhaY);
-            pdf.setFontSize(9);
-          }
-          
-          const radioValue = document.querySelector(`input[name="check_${i}"]:checked`)?.value;
-          const atendeText = radioValue ? radioValue.toUpperCase() : 'NÃO AVALIADO';
-          
-          if (i % 2 === 0) {
-            pdf.setFillColor(...PDF_CONFIG.colors.lightGray || [245, 245, 245]);
-            pdf.rect(marginLeft, linhaY, pageWidth - marginLeft - marginRight, 8, 'F');
-          }
-          
-          pdf.setTextColor(0, 0, 0);
-          pdf.setFont('helvetica', 'normal');
-          const lines = pdf.splitTextToSize(item, 110);
-          for (let j = 0; j < lines.length; j++) {
-            pdf.text(lines[j], marginLeft + 5, linhaY + (j * 4) + 5);
-          }
-          
-          pdf.setFont('helvetica', 'bold');
-          pdf.text(atendeText, pageWidth - marginRight - 15, linhaY + 5, { align: 'center' });
-          linhaY += Math.max(8, lines.length * 4 + 2);
-        }
-        
-        yPos = linhaY + 15;
-        
-        // Observações
-        const observacoes = document.getElementById('observacoes').value;
-        if (observacoes && observacoes.trim()) {
-          verificarNovaPagina(20);
-          pdf.setFontSize(12);
-          pdf.setFont('helvetica', 'bold');
-          pdf.setTextColor(...PDF_CONFIG.colors.primary);
-          pdf.text('OBSERVAÇÕES ADICIONAIS:', marginLeft, yPos);
-          yPos += 8;
-          pdf.setFontSize(10);
-          pdf.setFont('helvetica', 'normal');
-          pdf.setTextColor(0, 0, 0);
-          const obsLines = pdf.splitTextToSize(observacoes, pageWidth - 2 * marginLeft);
-          for (let i = 0; i < obsLines.length; i++) {
-            if (yPos > 250) {
-              const paginaAtual = pdf.internal.getNumberOfPages();
-              adicionarRodape(paginaAtual, paginaAtual);
-              pdf.addPage();
-              adicionarCabecalho();
-              yPos = 40;
-            }
-            pdf.text(obsLines[i], marginLeft, yPos);
-            yPos += 5;
-          }
-          yPos += 10;
-        }
-        
-        // Assinatura
-        verificarNovaPagina(40);
-        
-        // Obter dados do vistoriador
-        const vistoriador = document.getElementById('vistoriador').value || '________________';
-        const cargo = document.getElementById('cargo').value || 'Engenheiro/Responsável Técnico';
-        
-        // Nome e cargo do vistoriador
-        pdf.setFontSize(11);
-        pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(0, 0, 0);
-        pdf.text('VISTORIADOR:', marginLeft, yPos);
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(0, 0, 0);
-        pdf.text(vistoriador, marginLeft + 45, yPos);
-        yPos += 7;
-        
-        pdf.text('CARGO:', marginLeft, yPos);
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(0, 0, 0);
-        pdf.text(cargo, marginLeft + 45, yPos);
-        yPos += 15;
-        
-        // Linha de assinatura
-        pdf.setLineWidth(0.5);
-        pdf.setDrawColor(...PDF_CONFIG.colors.primary);
-        pdf.line(marginLeft, yPos, pageWidth - marginRight, yPos);
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'italic');
-        pdf.setTextColor(100, 100, 100);
-        pdf.text('ASSINATURA DO VISTORIADOR', pageWidth / 2, yPos - 2, { align: 'center' });
-        
-        // Adicionar rodapé em todas as páginas
-        const totalPaginas = pdf.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPaginas; i++) {
-          pdf.setPage(i);
-          adicionarRodape(i, totalPaginas);
-        }
-        
-        // Salvar o PDF
-        const nomeArquivo = protocolo && protocolo !== 'Não informado' ?
-          `Relatorio_Vistoria_${protocolo.replace(/\s+/g, '_')}.pdf` :
-          `Relatorio_Vistoria_${new Date().getTime()}.pdf`;
-        
-        pdf.save(nomeArquivo);
-        mostrarStatus('PDF gerado com sucesso!');
-        
-      } catch (error) {
-        console.error('Erro detalhado ao gerar PDF:', error);
-        mostrarStatus(`Erro ao gerar PDF: ${error.message}`, 'error');
-      }
-    }
-    
     function limparFormulario() {
       if (confirm('Tem certeza que deseja limpar todo o formulário? Todos os dados serão perdidos.')) {
         document.getElementById('empreendimento').value = '';
@@ -1793,15 +1407,14 @@
         document.getElementById('cargo').value = 'Engenheiro/Responsável Técnico';
         document.getElementById('cargo2').value = 'Engenheiro/Responsável Técnico';
         
-        // Resetar arrays para os valores iniciais
         condicionantes = [...condicionantesIniciais];
         checklistItems = [...checklistIniciais];
         
-        // Reconstruir as tabelas
         preencherCondicionantes();
         preencherChecklist();
         
         localStorage.removeItem('relatorioVistoria');
+        temAlteracao = false;
         atualizarStatusSalvamento();
         mostrarStatus('Formulário limpo com sucesso!');
       }
@@ -1817,7 +1430,7 @@
       } else if (tipo === 'info') {
         statusBar.style.background = 'linear-gradient(135deg, #17a2b8, #138496)';
       } else {
-        statusBar.style.background = 'linear-gradient(135deg, var(--accent-color), #20c997)';
+        statusBar.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
       }
       
       setTimeout(() => {
@@ -1825,18 +1438,338 @@
       }, 3000);
     }
     
-    // Auto-save a cada 30 segundos
+    // ============================================
+    // FUNÇÃO GERAR PDF - CORRIGIDA
+    // ============================================
+    
+    function adicionarCabecalhoPDF(pdf) {
+      try {
+        // Logos
+        if (LOGOS.headerLeft) {
+          pdf.addImage(LOGOS.headerLeft, 'PNG', PDF_CONFIG.marginLeft, 8, 22, 18);
+        }
+        if (LOGOS.headerRight) {
+          pdf.addImage(LOGOS.headerRight, 'PNG', PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight - 20, 8, 18, 16);
+        }
+        
+        // Primeira linha - DIVISÃO DE LICENCIAMENTO ESTRATÉGICO
+        pdf.setFont(PDF_CONFIG.font, "bold");
+        pdf.setFontSize(14);
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text(PDF_CONFIG.relatorioText.linha1, PDF_CONFIG.pageWidth / 2, 15, { align: 'center' });
+        
+        // Segunda linha - INSTITUTO ÁGUA E TERRA - IAT
+        pdf.setFontSize(12);
+        pdf.setFont(PDF_CONFIG.font, "normal");
+        pdf.text(PDF_CONFIG.relatorioText.linha2, PDF_CONFIG.pageWidth / 2, 22, { align: 'center' });
+        
+        // Terceira linha - RELATÓRIO DE VISTORIA TÉCNICA
+        pdf.setFontSize(14);
+        pdf.setFont(PDF_CONFIG.font, "bold");
+        pdf.text(PDF_CONFIG.relatorioText.linha3, PDF_CONFIG.pageWidth / 2, 32, { align: 'center' });
+        
+        // Linha decorativa
+        pdf.setDrawColor(...PDF_CONFIG.colors.primary);
+        pdf.setLineWidth(0.3);
+        pdf.line(PDF_CONFIG.marginLeft, 38, PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight, 38);
+        
+      } catch (e) {
+        console.log('Erro ao carregar logos, usando fallback:', e);
+        
+        pdf.setFillColor(...PDF_CONFIG.colors.primary);
+        pdf.rect(PDF_CONFIG.marginLeft, 8, 20, 18, 'F');
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(8);
+        pdf.text("IAT", PDF_CONFIG.marginLeft + 10, 18, { align: 'center' });
+        
+        pdf.setFillColor(...PDF_CONFIG.colors.secondary);
+        pdf.rect(PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight - 20, 8, 20, 18, 'F');
+        pdf.text("ERCBA", PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight - 10, 18, { align: 'center' });
+        
+        pdf.setFont(PDF_CONFIG.font, "bold");
+        pdf.setFontSize(14);
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text(PDF_CONFIG.relatorioText.linha1, PDF_CONFIG.pageWidth / 2, 15, { align: 'center' });
+        
+        pdf.setFontSize(12);
+        pdf.setFont(PDF_CONFIG.font, "normal");
+        pdf.text(PDF_CONFIG.relatorioText.linha2, PDF_CONFIG.pageWidth / 2, 22, { align: 'center' });
+        
+        pdf.setFontSize(14);
+        pdf.setFont(PDF_CONFIG.font, "bold");
+        pdf.text(PDF_CONFIG.relatorioText.linha3, PDF_CONFIG.pageWidth / 2, 32, { align: 'center' });
+        
+        pdf.setDrawColor(...PDF_CONFIG.colors.primary);
+        pdf.setLineWidth(0.3);
+        pdf.line(PDF_CONFIG.marginLeft, 38, PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight, 38);
+      }
+    }
+    
+    function adicionarRodapePDF(pdf, paginaAtual, totalPaginas) {
+      const hoje = new Date().toLocaleDateString('pt-BR');
+      
+      pdf.setDrawColor(...PDF_CONFIG.colors.mediumGray);
+      pdf.setLineWidth(0.2);
+      pdf.line(PDF_CONFIG.marginLeft, 277, PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight, 277);
+      
+      pdf.setFontSize(8);
+      pdf.setFont(PDF_CONFIG.font, "normal");
+      pdf.setTextColor(...PDF_CONFIG.colors.darkGray);
+      
+      pdf.text(PDF_CONFIG.footerText.linha1, PDF_CONFIG.marginLeft, 283);
+      pdf.text(PDF_CONFIG.footerText.linha2, PDF_CONFIG.marginLeft, 288);
+      pdf.text(PDF_CONFIG.footerText.linha3, PDF_CONFIG.marginLeft, 293);
+      
+      pdf.text(`Gerado em: ${hoje}`, PDF_CONFIG.pageWidth / 2, 293, { align: 'center' });
+      pdf.text(`Página ${paginaAtual} de ${totalPaginas}`, PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight, 293, { align: 'right' });
+    }
+    
+    function verificarNovaPaginaPDF(pdf, yPos, alturaNecessaria) {
+      if (yPos + alturaNecessaria > 270) {
+        const paginaAtual = pdf.internal.getNumberOfPages();
+        adicionarRodapePDF(pdf, paginaAtual, pdfTotalPaginas);
+        
+        pdf.addPage();
+        pdfTotalPaginas++;
+        adicionarCabecalhoPDF(pdf);
+        return 45; // Novo yPos após cabeçalho
+      }
+      return yPos;
+    }
+    
+    function adicionarCabecalhoCondicionantesPDF(pdf, y) {
+      pdf.setFillColor(...PDF_CONFIG.colors.primary);
+      pdf.rect(PDF_CONFIG.marginLeft, y, PDF_CONFIG.pageWidth - PDF_CONFIG.marginLeft - PDF_CONFIG.marginRight, 8, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont(PDF_CONFIG.font, 'bold');
+      pdf.setFontSize(9);
+      pdf.text('CONDICIONANTES', PDF_CONFIG.marginLeft + 5, y + 5);
+      pdf.text('ATENDE', PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight - 15, y + 5, { align: 'center' });
+      return y + 8;
+    }
+    
+    function adicionarCabecalhoChecklistPDF(pdf, y) {
+      pdf.setFillColor(...PDF_CONFIG.colors.secondary);
+      pdf.rect(PDF_CONFIG.marginLeft, y, PDF_CONFIG.pageWidth - PDF_CONFIG.marginLeft - PDF_CONFIG.marginRight, 8, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont(PDF_CONFIG.font, 'bold');
+      pdf.setFontSize(9);
+      pdf.text('CHECK-LIST IN-LOCO', PDF_CONFIG.marginLeft + 5, y + 5);
+      pdf.text('ATENDE', PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight - 15, y + 5, { align: 'center' });
+      return y + 8;
+    }
+    
+    function gerarPDF() {
+      if (!validarFormulario()) {
+        return;
+      }
+      
+      try {
+        mostrarStatus('Gerando PDF...', 'info');
+        
+        if (typeof window.jspdf === 'undefined') {
+          mostrarStatus('Erro: Biblioteca jsPDF não carregada', 'error');
+          return;
+        }
+        
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: 'p',
+          unit: 'mm',
+          format: 'a4'
+        });
+        
+        pdfTotalPaginas = 1;
+        
+        // Adicionar cabeçalho na primeira página
+        adicionarCabecalhoPDF(pdf);
+        let yPos = 45;
+        
+        // Informações básicas
+        pdf.setFontSize(11);
+        pdf.setFont(PDF_CONFIG.font, 'bold');
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        
+        const empreendimento = document.getElementById('empreendimento').value || 'Não informado';
+        const protocolo = document.getElementById('protocolo').value || 'Não informado';
+        const dataVistoria = document.getElementById('dataVistoria').value || 'Não informada';
+        
+        pdf.text('EMPREENDIMENTO:', PDF_CONFIG.marginLeft, yPos);
+        pdf.setFont(PDF_CONFIG.font, 'normal');
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(empreendimento, PDF_CONFIG.marginLeft + 45, yPos);
+        yPos += 7;
+        
+        pdf.text('PROTOCOLO:', PDF_CONFIG.marginLeft, yPos);
+        pdf.setFont(PDF_CONFIG.font, 'normal');
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(protocolo, PDF_CONFIG.marginLeft + 45, yPos);
+        yPos += 7;
+        
+        pdf.text('DATA:', PDF_CONFIG.marginLeft, yPos);
+        pdf.setFont(PDF_CONFIG.font, 'normal');
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(dataVistoria, PDF_CONFIG.marginLeft + 45, yPos);
+        yPos += 15;
+        
+        // Seção 1: Condicionantes
+        yPos = verificarNovaPaginaPDF(pdf, yPos, 30);
+        pdf.setFontSize(12);
+        pdf.setFont(PDF_CONFIG.font, 'bold');
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text('1. ATENDIMENTO ÀS CONDICIONANTES:', PDF_CONFIG.marginLeft, yPos);
+        yPos += 10;
+        
+        let linhaY = yPos;
+        linhaY = adicionarCabecalhoCondicionantesPDF(pdf, linhaY);
+        
+        pdf.setFontSize(9);
+        for (let i = 0; i < condicionantes.length; i++) {
+          let textoCond = condicionantes[i];
+          if (!textoCond || !textoCond.trim()) continue;
+          
+          linhaY = verificarNovaPaginaPDF(pdf, linhaY, 12);
+          
+          const radioValue = document.querySelector(`input[name="cond_${i}"]:checked`)?.value;
+          const atendeText = radioValue ? radioValue.toUpperCase() : 'NÃO';
+          
+          if (i % 2 === 0) {
+            pdf.setFillColor(...PDF_CONFIG.colors.lightGray);
+            pdf.rect(PDF_CONFIG.marginLeft, linhaY, PDF_CONFIG.pageWidth - PDF_CONFIG.marginLeft - PDF_CONFIG.marginRight, 8, 'F');
+          }
+          
+          pdf.setTextColor(0, 0, 0);
+          pdf.setFont(PDF_CONFIG.font, 'normal');
+          const lines = pdf.splitTextToSize(textoCond, 110);
+          for (let j = 0; j < lines.length; j++) {
+            pdf.text(lines[j], PDF_CONFIG.marginLeft + 5, linhaY + (j * 4) + 5);
+          }
+          
+          pdf.setFont(PDF_CONFIG.font, 'bold');
+          pdf.text(atendeText, PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight - 15, linhaY + 5, { align: 'center' });
+          linhaY += Math.max(8, lines.length * 4 + 2);
+        }
+        
+        yPos = linhaY + 10;
+        
+        // Seção 2: Checklist
+        yPos = verificarNovaPaginaPDF(pdf, yPos, 30);
+        pdf.setFontSize(12);
+        pdf.setFont(PDF_CONFIG.font, 'bold');
+        pdf.setTextColor(...PDF_CONFIG.colors.primary);
+        pdf.text('2. RELATÓRIO DE CONFORMIDADE:', PDF_CONFIG.marginLeft, yPos);
+        yPos += 10;
+        
+        linhaY = yPos;
+        linhaY = adicionarCabecalhoChecklistPDF(pdf, linhaY);
+        
+        pdf.setFontSize(9);
+        for (let i = 0; i < checklistItems.length; i++) {
+          const item = checklistItems[i];
+          if (!item || !item.trim()) continue;
+          
+          linhaY = verificarNovaPaginaPDF(pdf, linhaY, 12);
+          
+          const radioValue = document.querySelector(`input[name="check_${i}"]:checked`)?.value;
+          const atendeText = radioValue ? radioValue.toUpperCase() : 'NÃO AVALIADO';
+          
+          if (i % 2 === 0) {
+            pdf.setFillColor(...PDF_CONFIG.colors.lightGray);
+            pdf.rect(PDF_CONFIG.marginLeft, linhaY, PDF_CONFIG.pageWidth - PDF_CONFIG.marginLeft - PDF_CONFIG.marginRight, 8, 'F');
+          }
+          
+          pdf.setTextColor(0, 0, 0);
+          pdf.setFont(PDF_CONFIG.font, 'normal');
+          const lines = pdf.splitTextToSize(item, 110);
+          for (let j = 0; j < lines.length; j++) {
+            pdf.text(lines[j], PDF_CONFIG.marginLeft + 5, linhaY + (j * 4) + 5);
+          }
+          
+          pdf.setFont(PDF_CONFIG.font, 'bold');
+          pdf.text(atendeText, PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight - 15, linhaY + 5, { align: 'center' });
+          linhaY += Math.max(8, lines.length * 4 + 2);
+        }
+        
+        yPos = linhaY + 15;
+        
+        // Observações
+        const observacoes = document.getElementById('observacoes').value;
+        if (observacoes && observacoes.trim()) {
+          yPos = verificarNovaPaginaPDF(pdf, yPos, 20);
+          pdf.setFontSize(12);
+          pdf.setFont(PDF_CONFIG.font, 'bold');
+          pdf.setTextColor(...PDF_CONFIG.colors.primary);
+          pdf.text('OBSERVAÇÕES ADICIONAIS:', PDF_CONFIG.marginLeft, yPos);
+          yPos += 8;
+          pdf.setFontSize(10);
+          pdf.setFont(PDF_CONFIG.font, 'normal');
+          pdf.setTextColor(0, 0, 0);
+          const obsLines = pdf.splitTextToSize(observacoes, PDF_CONFIG.pageWidth - 2 * PDF_CONFIG.marginLeft);
+          for (let i = 0; i < obsLines.length; i++) {
+            yPos = verificarNovaPaginaPDF(pdf, yPos, 5);
+            pdf.text(obsLines[i], PDF_CONFIG.marginLeft, yPos);
+            yPos += 5;
+          }
+          yPos += 10;
+        }
+        
+        // Assinatura
+        yPos = verificarNovaPaginaPDF(pdf, yPos, 40);
+        
+        const vistoriador = document.getElementById('vistoriador').value || '________________';
+        const cargo = document.getElementById('cargo').value || 'Engenheiro/Responsável Técnico';
+        
+        pdf.setFontSize(11);
+        pdf.setFont(PDF_CONFIG.font, 'bold');
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('VISTORIADOR:', PDF_CONFIG.marginLeft, yPos);
+        pdf.setFont(PDF_CONFIG.font, 'normal');
+        pdf.text(vistoriador, PDF_CONFIG.marginLeft + 45, yPos);
+        yPos += 7;
+        
+        pdf.text('CARGO:', PDF_CONFIG.marginLeft, yPos);
+        pdf.setFont(PDF_CONFIG.font, 'normal');
+        pdf.text(cargo, PDF_CONFIG.marginLeft + 45, yPos);
+        yPos += 15;
+        
+        pdf.setLineWidth(0.5);
+        pdf.setDrawColor(...PDF_CONFIG.colors.primary);
+        pdf.line(PDF_CONFIG.marginLeft, yPos, PDF_CONFIG.pageWidth - PDF_CONFIG.marginRight, yPos);
+        pdf.setFontSize(9);
+        pdf.setFont(PDF_CONFIG.font, 'italic');
+        pdf.setTextColor(100, 100, 100);
+        pdf.text('ASSINATURA DO VISTORIADOR', PDF_CONFIG.pageWidth / 2, yPos - 2, { align: 'center' });
+        
+        // Adicionar rodapé em todas as páginas
+        const totalPaginas = pdf.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPaginas; i++) {
+          pdf.setPage(i);
+          adicionarRodapePDF(pdf, i, totalPaginas);
+        }
+        
+        const nomeArquivo = protocolo && protocolo !== 'Não informado' ?
+          `Relatorio_Vistoria_${protocolo.replace(/\s+/g, '_')}.pdf` :
+          `Relatorio_Vistoria_${new Date().getTime()}.pdf`;
+        
+        pdf.save(nomeArquivo);
+        mostrarStatus('PDF gerado com sucesso!');
+        
+      } catch (error) {
+        console.error('Erro detalhado ao gerar PDF:', error);
+        mostrarStatus(`Erro ao gerar PDF: ${error.message}`, 'error');
+      }
+    }
+    
+    // Auto-save otimizado
     setInterval(() => {
-      if (document.getElementById('empreendimento').value ||
-          document.getElementById('protocolo').value) {
+      if (temAlteracao) {
         salvarFormulario();
       }
     }, 30000);
     
-    // Prevenir perda de dados ao sair
-    window.addEventListener('beforeunload', function(e) {
-      if (document.getElementById('empreendimento').value ||
-          document.getElementById('protocolo').value) {
+    // Salvar ao sair
+    window.addEventListener('beforeunload', function() {
+      if (temAlteracao) {
         salvarFormulario();
       }
     });
